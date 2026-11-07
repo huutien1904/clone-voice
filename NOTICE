@@ -1,0 +1,18 @@
+VieNeu-TTS (bản phát triển)
+Copyright 2026 Trần Trọng Thanh Tùng và Hữu Tiến
+https://github.com/huutien1904/clone-voice
+
+Phát triển dựa trên VieNeu-TTS của tác giả Phạm Nguyễn Ngọc Bảo
+https://github.com/pnnbao97/VieNeu-TTS
+Mã nguồn gốc phát hành theo giấy phép Apache License 2.0 (xem file LICENSE).
+Các ghi chú bản quyền và ghi công của tác giả gốc trong mã nguồn được giữ nguyên.
+
+Bản này đã được sửa đổi so với bản gốc. Các phần bổ sung chính:
+- API server HTTP cho giọng có sẵn và giọng clone (apps/api_server.py, docs/API_SERVER.md)
+- Công cụ quản lý giọng clone lưu bền (apps/voice_tool.py)
+- Clone giọng thẳng từ audio/video dài, dấu vân giọng trung bình từ nhiều file,
+  chỉnh giọng miền Bắc/Nam (src/vieneu/v3turbo.py)
+
+Model VieNeu-TTS và các giọng có sẵn do tác giả gốc huấn luyện và phát hành trên
+Hugging Face (https://huggingface.co/pnnbao-ump), theo giấy phép riêng của từng model.
+Thư viện phiên âm sea-g2p: https://github.com/pnnbao97/sea-g2p
