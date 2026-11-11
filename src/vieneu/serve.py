@@ -27,7 +27,7 @@ def run_server(args: argparse.Namespace) -> None:
     """
     Starts the LMDeploy API server.
     """
-    logger.info(f"🚀 Starting VieNeu-TTS Remote Server...")
+    logger.info(f"🚀 Starting Clone-voice-TTS Remote Server...")
     logger.info(f"📦 Model: {args.model}")
     
     cmd = [
@@ -91,7 +91,7 @@ def run_server(args: argparse.Namespace) -> None:
             tunnel_process.terminate()
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="VieNeu-TTS Remote Server CLI")
+    parser = argparse.ArgumentParser(description="Clone-voice-TTS Remote Server CLI")
     parser.add_argument("--model", type=str, default="pnnbao-ump/VieNeu-TTS-v2", help="HuggingFace model ID or local path")
     parser.add_argument("--model-name", type=str, default="pnnbao-ump/VieNeu-TTS-v2", help="Model name for API mapping")
     parser.add_argument("--port", type=int, default=23333, help="Server port")

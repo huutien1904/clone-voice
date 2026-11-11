@@ -1,4 +1,4 @@
-"""Vendored VieNeu-TTS v3 Turbo engine.
+"""Vendored Clone-voice-TTS v3 Turbo engine.
 
 Exports are LAZY: importing this package (e.g. to reach the torch-free
 ``OnnxV3LiteEngine``) does NOT pull torch/transformers. The PyTorch engine

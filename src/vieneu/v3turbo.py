@@ -1,5 +1,5 @@
 """
-VieNeu-TTS v3 Turbo backend (PyTorch).
+Clone-voice-TTS v3 Turbo backend (PyTorch).
 ======================================
     from vieneu import Vieneu
     tts = Vieneu(mode="v3turbo")
@@ -159,7 +159,7 @@ def _compute_accent_direction(voices_file: str, accent: str) -> np.ndarray:
 
 
 class V3TurboVieNeuTTS(BaseVieneuTTS):
-    """VieNeu-TTS v3 Turbo (PyTorch)."""
+    """Clone-voice-TTS v3 Turbo (PyTorch)."""
 
     @staticmethod
     def _preclean_reference_audio(
@@ -261,7 +261,7 @@ class V3TurboVieNeuTTS(BaseVieneuTTS):
             # Torch-free CPU engine. Reads its ONNX graphs from `onnx_subfolder` in the
             # model repo (uploaded separately).
             from ._v3_turbo_engine.onnx_runtime_lite import OnnxV3LiteEngine
-            logger.info(f"⏳ Loading VieNeu-TTS v3 Turbo (ONNX/CPU) from: {backbone_repo}/{onnx_subfolder} ...")
+            logger.info(f"⏳ Loading Clone-voice-TTS v3 Turbo (ONNX/CPU) from: {backbone_repo}/{onnx_subfolder} ...")
             self.engine = OnnxV3LiteEngine(
                 checkpoint_path=backbone_repo,
                 onnx_repo=onnx_repo,
@@ -272,7 +272,7 @@ class V3TurboVieNeuTTS(BaseVieneuTTS):
             self.backend = "onnx"
         else:
             from ._v3_turbo_engine import VieNeuTTSv3Turbo
-            logger.info(f"⏳ Loading VieNeu-TTS v3 Turbo (PyTorch) from: {backbone_repo}/{model_subfolder} ...")
+            logger.info(f"⏳ Loading Clone-voice-TTS v3 Turbo (PyTorch) from: {backbone_repo}/{model_subfolder} ...")
             self.engine = VieNeuTTSv3Turbo(
                 checkpoint_path=backbone_repo,
                 model_subfolder=model_subfolder,
@@ -281,7 +281,7 @@ class V3TurboVieNeuTTS(BaseVieneuTTS):
                 dtype=dtype,
             )
             self.backend = "pytorch"
-        logger.info(f"✅ VieNeu-TTS v3 Turbo ready (backend={self.backend})")
+        logger.info(f"✅ Clone-voice-TTS v3 Turbo ready (backend={self.backend})")
 
         # Style is deprecated on v3 Turbo: it is implied by the reference (speaker
         # embedding + ref codes), so every generation uses the natural style. Kept
@@ -845,7 +845,7 @@ class V3TurboVieNeuTTS(BaseVieneuTTS):
                     gone.add(n)
                 else:
                     presets[n] = self._voice_to_json(self._preset_voices[n])
-        data = {"meta": {"note": "VieNeu user voices (cloned): speaker embedding + reference codes",
+        data = {"meta": {"note": "Clone-voice-TTS user voices (cloned): speaker embedding + reference codes",
                          "count": len(presets)},
                 "presets": presets}
         path.parent.mkdir(parents=True, exist_ok=True)

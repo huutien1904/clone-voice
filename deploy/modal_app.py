@@ -1,5 +1,5 @@
 """
-Deploy VieNeu-TTS API lên Modal.com (serverless, CPU, trả tiền theo giây chạy).
+Deploy Clone-voice-TTS API lên Modal.com (serverless, CPU, trả tiền theo giây chạy).
 =================================================================================
 Gói ``apps/api_server.py`` + model v3 Turbo (ONNX int8, tải sẵn vào image) + giọng
 người dùng (clone_bản tin vip, ...) thành một web endpoint HTTPS. Container tự tắt khi rảnh
@@ -133,7 +133,7 @@ class TTSService:
 
         self.api = api
         n = len(api.state.tts.list_voices())
-        print(f"✅ VieNeu-TTS sẵn sàng trên Modal: {n} giọng, threads={THREADS}, "
+        print(f"✅ Clone-voice-TTS sẵn sàng trên Modal: {n} giọng, threads={THREADS}, "
               f"auth={'bật' if api.state.api_key else 'TẮT'}", flush=True)
 
     @modal.asgi_app(label="vieneu-tts")   # URL: https://<workspace>--vieneu-tts.modal.run

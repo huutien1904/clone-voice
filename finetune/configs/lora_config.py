@@ -18,7 +18,7 @@ lora_config = LoraConfig(
 
 training_config = {
     'model': "pnnbao-ump/VieNeu-TTS-0.3B",
-    'run_name': "VieNeu-TTS-0.3B-LoRA",
+    'run_name': "Clone-voice-TTS-0.3B-LoRA",
     'output_dir': os.path.join("finetune", "output"),
     
     'per_device_train_batch_size': 2, 

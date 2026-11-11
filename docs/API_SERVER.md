@@ -1,4 +1,4 @@
-# VieNeu-TTS API server & giọng clone lưu bền
+# Clone-voice-TTS API server & giọng clone lưu bền
 
 Tài liệu này mô tả hai tính năng đi kèm nhau:
 
@@ -287,16 +287,16 @@ Chỉ xoá được giọng người dùng (`403` với giọng có sẵn).
 
 ```ini
 [Unit]
-Description=VieNeu-TTS API
+Description=Clone-voice-TTS API
 After=network.target
 
 [Service]
 User=vieneu
-WorkingDirectory=/opt/VieNeu-TTS
+WorkingDirectory=/opt/Clone-voice-TTS
 Environment=VIENEU_API_KEY=doi-thanh-chuoi-bi-mat
 Environment=VIENEU_THREADS=4
 Environment=HF_HUB_OFFLINE=1
-ExecStart=/opt/VieNeu-TTS/.venv/bin/python -m apps.api_server --host 0.0.0.0 --port 8000
+ExecStart=/opt/Clone-voice-TTS/.venv/bin/python -m apps.api_server --host 0.0.0.0 --port 8000
 Restart=always
 
 [Install]

@@ -1,5 +1,5 @@
 """
-Quản lý giọng người dùng (clone → lưu bền) cho VieNeu-TTS v3 Turbo.
+Quản lý giọng người dùng (clone → lưu bền) cho Clone-voice-TTS v3 Turbo.
 ====================================================================
 Giọng lưu trong ``~/.cache/vieneu/user_voices.json`` (hoặc ``$VIENEU_USER_VOICES``)
 và tự xuất hiện trong SDK (``voice="tên"``), web UI (dropdown Giọng mẫu sau khi
@@ -71,7 +71,7 @@ def _read_user(path: Path) -> dict:
 
 
 def _write_user(path: Path, presets: dict) -> None:
-    data = {"meta": {"note": "VieNeu user voices (cloned): speaker embedding + reference codes",
+    data = {"meta": {"note": "Clone-voice-TTS user voices (cloned): speaker embedding + reference codes",
                      "count": len(presets)}, "presets": presets}
     path.parent.mkdir(parents=True, exist_ok=True)
     fd, tmp = tempfile.mkstemp(prefix=".user_voices_", suffix=".json", dir=str(path.parent))
@@ -259,7 +259,7 @@ def cmd_path(args) -> int:
 
 
 def main(argv=None) -> None:
-    p = argparse.ArgumentParser(description="Quản lý giọng người dùng VieNeu-TTS (clone đã lưu)")
+    p = argparse.ArgumentParser(description="Quản lý giọng người dùng Clone-voice-TTS (clone đã lưu)")
     sub = p.add_subparsers(dest="cmd", required=True)
 
     def tune_args(sp):

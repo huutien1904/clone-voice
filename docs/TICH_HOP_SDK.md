@@ -1,6 +1,6 @@
-# Hướng dẫn tích hợp VieNeu-TTS (Python SDK) vào dự án của bạn
+# Hướng dẫn tích hợp Clone-voice-TTS (Python SDK) vào dự án của bạn
 
-Tài liệu này mô tả cách nhúng **VieNeu-TTS** trực tiếp vào một dự án Python bằng SDK `vieneu`
+Tài liệu này mô tả cách nhúng **Clone-voice-TTS** trực tiếp vào một dự án Python bằng SDK `vieneu`
 (Cách 1 — chạy local, cùng tiến trình, **không cần server**). Mặc định SDK dùng **v3 Turbo, 48 kHz**,
 đường CPU/ONNX (torch-free) — phù hợp nhất cho hầu hết ứng dụng.
 
@@ -66,7 +66,7 @@ Sau khi tạo: `tts.sample_rate == 48000`, `tts.backend` là `"onnx"` hoặc `"p
 
 ```python
 # 1) Dùng giọng preset dựng sẵn (không cần clip mẫu)
-audio = tts.infer("Xin chào các bạn, đây là VieNeu-TTS.", voice="Adam")
+audio = tts.infer("Xin chào các bạn, đây là Clone-voice-TTS.", voice="Adam")
 tts.save(audio, "output.wav")     # ghi WAV 48 kHz
 
 # 2) Tự lấy dữ liệu sóng để đưa vào pipeline khác (bytes, phát trực tiếp, v.v.)

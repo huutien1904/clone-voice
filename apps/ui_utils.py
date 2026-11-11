@@ -138,9 +138,9 @@ def on_custom_id_change(model_id):
     if model_id and "lora" in model_id.lower():
         # Detect base model
         if "0.3" in model_id:
-            base_model = "VieNeu-TTS-0.3B (GPU)"
+            base_model = "Clone-voice-TTS-0.3B (GPU)"
         else:
-            base_model = "VieNeu-TTS (GPU)"
+            base_model = "Clone-voice-TTS (GPU)"
 
         return (
             gr.update(visible=True, value=base_model),

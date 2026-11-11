@@ -53,7 +53,7 @@ try:
 except ImportError:
     pass
 
-print("⏳ Đang khởi động VieNeu-TTS (Phiên bản tối ưu cho Intel XPU)...")
+print("⏳ Đang khởi động Clone-voice-TTS (Phiên bản tối ưu cho Intel XPU)...")
 
 
 # --- CONSTANTS & CONFIG ---
@@ -592,14 +592,14 @@ def synthesize_speech(text: str, voice_choice: str, custom_audio, custom_text: s
 
 synthesize_speech_with_estimate = wrap_with_estimate(synthesize_speech)
 
-with gr.Blocks(theme=theme, css=css, title="VieNeu-TTS (XPU)", head=head_html) as demo:
+with gr.Blocks(theme=theme, css=css, title="Clone-voice-TTS (XPU)", head=head_html) as demo:
 
     with gr.Column(elem_classes="container"):
         gr.HTML("""
 <div class="header-box">
     <h1 class="header-title">
         <span class="header-icon">🦜</span>
-        <span class="gradient-text">VieNeu-TTS Studio (Intel XPU Edition)</span>
+        <span class="gradient-text">Clone-voice-TTS Studio (Intel XPU Edition)</span>
     </h1>
     <div class="model-card-content">
         <div class="model-card-item">
@@ -633,7 +633,7 @@ with gr.Blocks(theme=theme, css=css, title="VieNeu-TTS (XPU)", head=head_html) a
             with gr.Row():
                 backbone_select = gr.Dropdown(
                     list(BACKBONE_CONFIGS.keys()) + ["Custom Model"], 
-                    value="VieNeu-TTS (GPU)", 
+                    value="Clone-voice-TTS (GPU)", 
                     label="🦜 Backbone"
                 )
                 codec_select = gr.Dropdown(list(CODEC_CONFIGS.keys()), value="NeuCodec (Distill)", label="🎵 Codec")
@@ -656,14 +656,14 @@ with gr.Blocks(theme=theme, css=css, title="VieNeu-TTS (XPU)", head=head_html) a
                 custom_backbone_base_model = gr.Dropdown(
                     [k for k in BACKBONE_CONFIGS.keys() if "gguf" not in k.lower()],
                     label="🔗 Base Model (cho LoRA)",
-                    value="VieNeu-TTS-0.3B (GPU)",
+                    value="Clone-voice-TTS-0.3B (GPU)",
                     visible=False,
                     info="Model gốc để merge với LoRA",
                     scale=1
                 )
             
             gr.Markdown("""
-            💡 **Sử dụng Custom Model:** Chọn "Custom Model" để tải LoRA adapter hoặc bất kỳ model nào được finetune từ **VieNeu-TTS** hoặc **VieNeu-TTS-0.3B**.
+            💡 **Sử dụng Custom Model:** Chọn "Custom Model" để tải LoRA adapter hoặc bất kỳ model nào được finetune từ **Clone-voice-TTS** hoặc **Clone-voice-TTS-0.3B**.
             """)
             
             gr.HTML("""

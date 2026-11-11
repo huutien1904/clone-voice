@@ -14,7 +14,7 @@ logger = logging.getLogger("Vieneu.XPU")
 
 class XPUVieNeuTTS(VieNeuTTS):
     """
-    XPU (Intel Arc GPU) optimized implementation of VieNeu-TTS.
+    XPU (Intel Arc GPU) optimized implementation of Clone-voice-TTS.
     Uses native PyTorch XPU backend with bfloat16 and specialized compilation/warmup.
     """
 

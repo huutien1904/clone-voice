@@ -1,4 +1,4 @@
-# 🐳 Docker Deployment Guide for VieNeu-TTS
+# 🐳 Docker Deployment Guide for Clone-voice-TTS
 
 ## 📋 Table of Contents
 
@@ -67,10 +67,10 @@ The Production environment uses `docker/docker-compose.prod.yml`. Source code wi
 
 ### 1. Build Docker Image
 
-Copy `.env.example` to `.env` and set your image name (e.g., `myregistry.com/vieneu-tts-gpu`):
+Copy `.env.example` to `.env` and set your image name (e.g., `myregistry.com/clone-voice-tts-gpu`):
 
 ```bash
-IMAGE_NAME=myregistry.com/vieneu-tts-gpu
+IMAGE_NAME=myregistry.com/clone-voice-tts-gpu
 IMAGE_TAG=v1.0.0
 ```
 

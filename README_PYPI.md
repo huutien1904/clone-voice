@@ -1,8 +1,8 @@
-# 🦜 VieNeu-TTS
+# 🦜 Clone-voice-TTS
 
 > Developed by **Trần Trọng Thanh Tùng** & **Hữu Tiến**, based on [VieNeu-TTS](https://github.com/pnnbao97/VieNeu-TTS) by **Phạm Nguyễn Ngọc Bảo** (Apache 2.0).
 
-**VieNeu-TTS** is an advanced on-device Vietnamese Text-to-Speech (TTS) with **instant voice cloning** and **English–Vietnamese bilingual** support. The SDK **defaults to VieNeu-TTS v3 Turbo (48 kHz)** and the minimal install is **torch-free** — on CPU it runs entirely on ONNX Runtime.
+**Clone-voice-TTS** is an advanced on-device Vietnamese Text-to-Speech (TTS) with **instant voice cloning** and **English–Vietnamese bilingual** support. The SDK **defaults to Clone-voice-TTS v3 Turbo (48 kHz)** and the minimal install is **torch-free** — on CPU it runs entirely on ONNX Runtime.
 
 [![Hugging Face v3 Turbo](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-v3%20Turbo-red)](https://huggingface.co/pnnbao-ump/VieNeu-TTS-v3-Turbo)
 [![License](https://img.shields.io/badge/License-Apache%202.0-green.svg)](https://opensource.org/licenses/Apache-2.0)
@@ -56,7 +56,7 @@ vieneu = Vieneu()                    # int8 backbone (default, fastest on CPU)
 
 # 1. Built-in voice by name — no reference needed
 print("🔊 Generating speech...")
-audio = vieneu.infer("Xin chào, đây là VieNeu-TTS.", voice="Adam")
+audio = vieneu.infer("Xin chào, đây là Clone-voice-TTS.", voice="Adam")
 vieneu.save(audio, "output.wav")
 print("✅ Saved to output.wav")
 
@@ -135,7 +135,7 @@ wav, sr = vieneu.denoise("noisy.wav", out_path="clean.wav")
 
 | Model | Engine | Device | Sample Rate | Features |
 |---|---|---|---|---|
-| **VieNeu-TTS v3 Turbo** *(default)* | ONNX (CPU) / PyTorch (GPU) | CPU/GPU | 48 kHz | Default voices, cloning, emotion cues |
+| **Clone-voice-TTS v3 Turbo** *(default)* | ONNX (CPU) / PyTorch (GPU) | CPU/GPU | 48 kHz | Default voices, cloning, emotion cues |
 
 ---
 

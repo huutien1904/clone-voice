@@ -1,5 +1,5 @@
 """
-VieNeu-TTS v3 Turbo (int8) — CPU streaming demo (FastAPI).
+Clone-voice-TTS v3 Turbo (int8) — CPU streaming demo (FastAPI).
 ==========================================================
 Stream 48 kHz audio ngay khi generate, qua `V3TurboVieNeuTTS.infer_stream` (đường
 ONNX/CPU int8 mặc định). Vì RTF < 1 (int8 nhanh hơn realtime), stream chạy mượt
@@ -36,7 +36,7 @@ CLIENT_HTML_PATH = ROOT_DIR / "client" / "client.html"
 
 def load_model():
     global vieneu
-    print("⏳ Loading VieNeu-TTS v3 Turbo (int8, CPU)...")
+    print("⏳ Loading Clone-voice-TTS v3 Turbo (int8, CPU)...")
     # backend="onnx" ép đường ONNX/CPU int8. KHÔNG để device="auto" (mặc định):
     vieneu = Vieneu(backend="onnx")  # == Vieneu(mode="v3turbo", backend="onnx", precision="int8")
     print(f"✅ Ready. Backbone: int8 | intra_op threads: {getattr(vieneu.engine, 'ort_intra_op_threads', '?')}")
@@ -123,7 +123,7 @@ async def stream_post(req: StreamReq):
 
 
 def main():
-    print("🌍 Mở http://localhost:8001 để test VieNeu v3 Turbo (int8) streaming (CPU)")
+    print("🌍 Mở http://localhost:8001 để test Clone-voice-TTS v3 Turbo (int8) streaming (CPU)")
     uvicorn.run(app, host="127.0.0.1", port=8001)
 
 

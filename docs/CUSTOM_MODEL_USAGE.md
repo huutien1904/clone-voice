@@ -2,10 +2,10 @@
 
 ## 📖 Giới thiệu
 
-VieNeu-TTS hỗ trợ tải và sử dụng các mô hình tùy chỉnh từ HuggingFace hoặc đường dẫn cục bộ (Local Path), bao gồm:
+Clone-voice-TTS hỗ trợ tải và sử dụng các mô hình tùy chỉnh từ HuggingFace hoặc đường dẫn cục bộ (Local Path), bao gồm:
 
 1.  **LoRA Adapters**: Model fine-tune bằng phương pháp LoRA. (Hỗ trợ tăng tốc với **LMDeploy**!)
-2.  **Custom Finetune Models**: Model fine-tune đầy đủ (Full Finetune) dựa trên VieNeu-TTS.
+2.  **Custom Finetune Models**: Model fine-tune đầy đủ (Full Finetune) dựa trên Clone-voice-TTS.
 3.  **GGUF Quantized Models**: Model lượng tử hóa GGUF (chạy trên CPU/llama.cpp).
 
 ---

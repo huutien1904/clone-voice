@@ -1,4 +1,4 @@
-# Prompt tích hợp VieNeu-TTS API vào ứng dụng (giọng clone_bản tin vip)
+# Prompt tích hợp Clone-voice-TTS API vào ứng dụng (giọng clone_bản tin vip)
 
 Dán đoạn dưới đây cho trợ lý AI hoặc lập trình viên đang làm ứng dụng của bạn.
 Thay `<HOST>` bằng IP/tên miền server và `<API_KEY>` bằng giá trị `VIENEU_API_KEY` (bỏ phần key nếu server không bật xác thực).
@@ -9,7 +9,7 @@ mạng LAN (khi đó khởi động server với `--host 0.0.0.0 --api-key <chuo
 
 ---
 
-Tôi có một server text-to-speech tiếng Việt (VieNeu-TTS v3 Turbo) đang chạy tại `http://<HOST>:8000`.
+Tôi có một server text-to-speech tiếng Việt (Clone-voice-TTS v3 Turbo) đang chạy tại `http://<HOST>:8000`.
 Hãy viết cho ứng dụng của tôi một module client gọi server này để chuyển văn bản thành giọng nói bằng giọng có id **`clone_bản tin vip`** (giọng đã clone sẵn trên server). Yêu cầu và đặc tả API như sau.
 
 ## Yêu cầu chức năng

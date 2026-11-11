@@ -2,10 +2,10 @@
 
 def Vieneu(mode="v3turbo", **kwargs):
     """
-    Factory function for VieNeu-TTS.
+    Factory function for Clone-voice-TTS.
 
     Args:
-        mode: 'v3turbo' (DEFAULT) — VieNeu-TTS v3 Turbo, 48 kHz. CPU runs torch-free
+        mode: 'v3turbo' (DEFAULT) — Clone-voice-TTS v3 Turbo, 48 kHz. CPU runs torch-free
               via ONNX Runtime; GPU uses PyTorch. Works with the minimal install.
               Other modes need extras (``pip install vieneu[gpu]``):
               'standard' (CPU/GPU-GGUF), 'fast' (GPU-LMDeploy), 'turbo'/'turbo_gpu',
@@ -13,7 +13,7 @@ def Vieneu(mode="v3turbo", **kwargs):
         **kwargs: Arguments for chosen class
 
     Returns:
-        BaseVieneuTTS: An instance of a VieNeu-TTS implementation.
+        BaseVieneuTTS: An instance of a Clone-voice-TTS implementation.
     """
     match mode:
         case "v3turbo":

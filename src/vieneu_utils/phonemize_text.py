@@ -1,5 +1,5 @@
 """
-Phonemization module for VieNeu-TTS.
+Phonemization module for Clone-voice-TTS.
 Delegates all normalization and G2P logic to the sea-g2p library,
 which provides a unified, tested, and maintained Vietnamese G2P pipeline.
 """
@@ -56,7 +56,7 @@ def _emotion_tag_token(tag: str) -> Optional[str]:
 # ---------------------------------------------------------------------------
 # Always-punc_norm normalizer wrapper
 # ---------------------------------------------------------------------------
-# VieNeu-TTS LUÔN bật punc_norm (sea-g2p >= 0.7.6): câu ngắn (<5 từ) ép dấu cuối
+# Clone-voice-TTS LUÔN bật punc_norm (sea-g2p >= 0.7.6): câu ngắn (<5 từ) ép dấu cuối
 # về ".", câu dài thiếu dấu kết thúc thì thêm ".". Dùng wrapper này thay cho
 # sea_g2p.Normalizer ở mọi nơi để không phải truyền punc_norm=True rải rác và để
 # bảo đảm hành vi "luôn luôn" kể cả ở các call-site tương lai.

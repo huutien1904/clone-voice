@@ -1,4 +1,4 @@
-# Deploy VieNeu-TTS API lên Modal.com (serverless CPU)
+# Deploy Clone-voice-TTS API lên Modal.com (serverless CPU)
 
 File deploy: [`deploy/modal_app.py`](../deploy/modal_app.py). Nó gói API server
 (`apps/api_server.py`), model v3 Turbo ONNX int8 (tải sẵn vào image lúc build), ffmpeg và

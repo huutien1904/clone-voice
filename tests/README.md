@@ -1,6 +1,6 @@
-# VieNeu-TTS Testing Directory
+# Clone-voice-TTS Testing Directory
 
-This directory contains test suites and utilities for verifying the VieNeu-TTS package.
+This directory contains test suites and utilities for verifying the Clone-voice-TTS package.
 
 ## How to run tests
 

@@ -1,4 +1,4 @@
-"""Configuration for VieNeu-TTS v3 Turbo."""
+"""Configuration for Clone-voice-TTS v3 Turbo."""
 from __future__ import annotations
 
 from typing import Optional
@@ -7,7 +7,7 @@ from transformers import PretrainedConfig
 
 
 class VieNeuV3TurboConfig(PretrainedConfig):
-    """Config for the VieNeu-TTS v3 Turbo model.
+    """Config for the Clone-voice-TTS v3 Turbo model.
 
     Loaded from the model repo by ``VieNeuTTSv3Turbo``; you rarely build it by hand.
     """

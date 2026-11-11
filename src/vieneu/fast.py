@@ -14,7 +14,7 @@ logger = logging.getLogger("Vieneu.Fast")
 
 class FastVieNeuTTS(BaseVieneuTTS):
     """
-    GPU-optimized VieNeu-TTS using LMDeploy TurbomindEngine.
+    GPU-optimized Clone-voice-TTS using LMDeploy TurbomindEngine.
     """
 
     def __init__(
@@ -110,7 +110,7 @@ class FastVieNeuTTS(BaseVieneuTTS):
             raise ValueError(
                 "No valid speech tokens found in the output. "
                 "Lỗi này có thể do GPU của bạn không hỗ trợ định dạng bfloat16 (ví dụ: dòng T4, RTX 20-series) "
-                "dẫn đến sai số khi tính toán. Bạn hãy thử chuyển sang dùng phiên bản VieNeu-TTS-0.3B nếu vẫn muốn dùng LmDeploy hoặc "
+                "dẫn đến sai số khi tính toán. Bạn hãy thử chuyển sang dùng phiên bản Clone-voice-TTS-0.3B nếu vẫn muốn dùng LmDeploy hoặc "
                 "bỏ chọn 'LMDeploy' trong Tùy chọn nâng cao. Nếu vẫn gặp lỗi này, hãy thông báo với chúng tôi tại: https://discord.com/invite/yJt8kzjzWZ"
             )
 

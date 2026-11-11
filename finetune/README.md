@@ -1,6 +1,6 @@
-# 🦜 Hướng dẫn Fine-tune VieNeu-TTS (LoRA)
+# 🦜 Hướng dẫn Fine-tune Clone-voice-TTS (LoRA)
 
-Thư mục này chứa toàn bộ công cụ cần thiết để bạn huấn luyện (fine-tune) mô hình VieNeu-TTS với giọng nói của riêng mình bằng phương pháp **LoRA (Low-Rank Adaptation)**.
+Thư mục này chứa toàn bộ công cụ cần thiết để bạn huấn luyện (fine-tune) mô hình Clone-voice-TTS với giọng nói của riêng mình bằng phương pháp **LoRA (Low-Rank Adaptation)**.
 
 ## ⚙️ Cài đặt (Setup)
 
@@ -54,7 +54,7 @@ Mô hình sẽ được lưu định kỳ vào thư mục `finetune/output/`.
 ---
 
 ## 📓 Sử dụng Notebook (Khuyên dùng)
-Nếu bạn không quen sử dụng script console, chúng tôi cung cấp file Notebook `finetune_VieNeu-TTS.ipynb`. File này đã tích hợp sẵn mọi bước từ chuẩn bị đến huấn luyện, cực kỳ dễ theo dõi trên Google Colab hoặc máy cục bộ.
+Nếu bạn không quen sử dụng script console, chúng tôi cung cấp file Notebook `finetune_Clone-voice-TTS.ipynb`. File này đã tích hợp sẵn mọi bước từ chuẩn bị đến huấn luyện, cực kỳ dễ theo dõi trên Google Colab hoặc máy cục bộ.
 
 ---
 

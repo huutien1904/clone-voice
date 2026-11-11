@@ -1,4 +1,4 @@
-# 🦜 VieNeu-TTS
+# 🦜 Clone-voice-TTS
 
 > Developed by **Trần Trọng Thanh Tùng** & **Hữu Tiến**, based on [VieNeu-TTS](https://github.com/pnnbao97/VieNeu-TTS) by **Phạm Nguyễn Ngọc Bảo** (Apache 2.0). See [NOTICE](NOTICE).
 
@@ -12,10 +12,10 @@
 
 <img width="1087" height="710" alt="image" src="https://github.com/user-attachments/assets/5534b5db-f30b-4d27-8a35-80f1cf6e5d4d" />
 
-**VieNeu-TTS-v2** is the next generation of on-device Vietnamese TTS, featuring **10,000+ hours** of bilingual training, **instant voice cloning**, and a dedicated **Podcast/Conversation** mode.
+**Clone-voice-TTS-v2** is the next generation of on-device Vietnamese TTS, featuring **10,000+ hours** of bilingual training, **instant voice cloning**, and a dedicated **Podcast/Conversation** mode.
 
 > [!NOTE]
-> **🆕 VieNeu-TTS v3 Turbo (early access) is out for preview!**
+> **🆕 Clone-voice-TTS v3 Turbo (early access) is out for preview!**
 > A brand-new architecture **designed and trained from scratch by Phạm Nguyễn Ngọc Bảo** (codec: [MOSS-Audio-Tokenizer-Nano](https://huggingface.co/OpenMOSS-Team/MOSS-Audio-Tokenizer-Nano); phonemizer: [sea-g2p](https://github.com/pnnbao97/sea-g2p)):
 > - **48 kHz** high-fidelity audio (up from 24 kHz).
 > - **Built-in default voices** — stable and consistent, no reference clip needed.
@@ -24,10 +24,10 @@
 > - **Batched generation** (batch size up to 32), including a multi-speaker **Conversation** mode that batches the whole script regardless of speaker.
 > - **Instant voice cloning** from a 3–8s clip, with automatic reference denoising.
 >
-> Try it in the Web UI (backbone **"VieNeu-TTS-v3-Turbo (Thử nghiệm)"**) or the SDK (`Vieneu(mode="v3turbo")`). The **full v3** release is coming in the next few weeks.
+> Try it in the Web UI (backbone **"Clone-voice-TTS-v3-Turbo (Thử nghiệm)"**) or the SDK (`Vieneu(mode="v3turbo")`). The **full v3** release is coming in the next few weeks.
 
 > [!IMPORTANT]
-> **🚀 VieNeu-TTS-v2 is here!**
+> **🚀 Clone-voice-TTS-v2 is here!**
 > The full high-fidelity bilingual architecture is now available with:
 > - **10,000+ Hours of Data:** Unmatched naturalness in both English and Vietnamese.
 > - **Podcast & Dialogue Mode:** Multi-speaker support with emotional nuances.
@@ -41,7 +41,7 @@
 - **Ultra-Fast Performance**: Optimized for **GPU (LMDeploy)** and **CPU (GGUF/ONNX)**.
 - **Production-Ready**: High-quality 24 kHz waveform generation, fully offline.
 
-[<img width="600" height="595" alt="VieNeu-TTS Demo" src="https://github.com/user-attachments/assets/021f6671-2d7f-4635-91fb-88b2ab0ddbcd" />](https://github.com/user-attachments/assets/021f6671-2d7f-4635-91fb-88b2ab0ddbcd)
+[<img width="600" height="595" alt="Clone-voice-TTS Demo" src="https://github.com/user-attachments/assets/021f6671-2d7f-4635-91fb-88b2ab0ddbcd" />](https://github.com/user-attachments/assets/021f6671-2d7f-4635-91fb-88b2ab0ddbcd)
 
 ## 📌 Table of Contents
 
@@ -100,7 +100,7 @@ curl -LsSf https://astral.sh/uv/install.sh | sh
 
 ## 📦 2. Using the Python SDK (vieneu) <a name="sdk"></a>
 
-The `vieneu` SDK **defaults to VieNeu-TTS v3 Turbo (48 kHz)**. The minimal install is **torch-free**: on CPU everything runs on **ONNX Runtime** (PyTorch is never imported), and on a CUDA machine it auto-switches to the PyTorch engine — where inference is **batched automatically** (same API, no code change).
+The `vieneu` SDK **defaults to Clone-voice-TTS v3 Turbo (48 kHz)**. The minimal install is **torch-free**: on CPU everything runs on **ONNX Runtime** (PyTorch is never imported), and on a CUDA machine it auto-switches to the PyTorch engine — where inference is **batched automatically** (same API, no code change).
 
 ### Quick Start
 
@@ -281,7 +281,7 @@ wav, sr = vieneu.denoise("noisy.wav", out_path="clean.wav")   # 44.1 kHz mono
 
 ## 🐳 3. High-Quality Server (Standard Mode) <a name="docker-remote"></a>
 
-Deploy VieNeu-TTS as a high-performance API Server (powered by LMDeploy) with a single command.
+Deploy Clone-voice-TTS as a high-performance API Server (powered by LMDeploy) with a single command.
 
 ### 1. Run with Docker (Recommended)
 
@@ -292,7 +292,7 @@ Deploy VieNeu-TTS as a high-performance API Server (powered by LMDeploy) with a 
 docker run --gpus all -p 23333:23333 -v huggingface_cache:/root/.cache/huggingface pnnbao/vieneu-tts:latest --tunnel
 ```
 
-*   **Default**: The server loads the `VieNeu-TTS-v2` model for maximum quality.
+*   **Default**: The server loads the `Clone-voice-TTS-v2` model for maximum quality.
 *   **Tunneling**: The Docker image includes a built-in `bore` tunnel. Check the container logs to find your public address (e.g., `bore.pub:31631`).
 
 ### 2. Using the SDK (Remote Mode)
@@ -332,7 +332,7 @@ if available_voices:
     print(f"💾 Saved synthesis to: outputs/remote_{my_voice_id}.wav")
 
 # Standard synthesis (uses default voice)
-text_input = "Chế độ remote giúp tích hợp VieNeu vào ứng dụng Web hoặc App cực nhanh mà không cần GPU tại máy khách."
+text_input = "Chế độ remote giúp tích hợp Clone-voice-TTS vào ứng dụng Web hoặc App cực nhanh mà không cần GPU tại máy khách."
 audio = vieneu.infer(text=text_input)
 vieneu.save(audio, "outputs/remote_output.wav")
 print("💾 Saved remote synthesis to: outputs/remote_output.wav")
@@ -340,7 +340,7 @@ print("💾 Saved remote synthesis to: outputs/remote_output.wav")
 # Zero-shot voice cloning (encodes audio locally, sends codes to server)
 if os.path.exists("examples/audio_ref/example_ngoc_huyen.wav"):
     cloned_audio = vieneu.infer(
-        text="Đây là giọng nói được clone và xử lý thông qua VieNeu Server.",
+        text="Đây là giọng nói được clone và xử lý thông qua Clone-voice-TTS Server.",
         ref_audio="examples/audio_ref/example_ngoc_huyen.wav",
         ref_text="Tác phẩm dự thi bảo đảm tính khoa học, tính đảng, tính chiến đấu, tính định hướng."
     )
@@ -350,7 +350,7 @@ if os.path.exists("examples/audio_ref/example_ngoc_huyen.wav"):
 *For full implementation details, see: [examples/main_remote.py](examples/main_remote.py)*
 
 ### Voice Preset Specification (v1.0)
-VieNeu-TTS uses the official `vieneu.voice.presets` specification to define reusable voice assets. Only `voices.json` files following this spec are guaranteed to be compatible with VieNeu-TTS SDK ≥ v1.x.
+Clone-voice-TTS uses the official `vieneu.voice.presets` specification to define reusable voice assets. Only `voices.json` files following this spec are guaranteed to be compatible with Clone-voice-TTS SDK ≥ v1.x.
 
 ### 3. Advanced Configuration
 
@@ -377,21 +377,21 @@ docker run --gpus all \
 
 | Model | Format | Device | Bilingual | Features | Speed |
 |---|---|---|---|---|---|
-| **VieNeu-TTS-v3-Turbo** *(early access)* | PyTorch/ONNX | **GPU/CPU** | ✅ | **48 kHz, Default voices, Cloning, Emotion cues, Conversation** | **Fast (batched)** |
-| **VieNeu-TTS-v2** | PyTorch | **GPU** | ✅ | **Podcast, En-Vi CS** | **Fast (LMDeploy)** |
-| **VieNeu-v2-CPU** | GGUF/ONNX | **CPU/Edge** | ✅ | **Podcast, En-Vi CS** | **Extreme Speed** |
-| **VieNeu-v2-Turbo** | GGUF/ONNX | **CPU/Edge** | ✅ | Lightweight En-Vi | **Ultra Fast** |
-| **VieNeu-TTS (v1)** | PyTorch | GPU/CPU | ❌ | Stable (Vi only) | Standard |
+| **Clone-voice-TTS-v3-Turbo** *(early access)* | PyTorch/ONNX | **GPU/CPU** | ✅ | **48 kHz, Default voices, Cloning, Emotion cues, Conversation** | **Fast (batched)** |
+| **Clone-voice-TTS-v2** | PyTorch | **GPU** | ✅ | **Podcast, En-Vi CS** | **Fast (LMDeploy)** |
+| **Clone-voice-TTS-v2-CPU** | GGUF/ONNX | **CPU/Edge** | ✅ | **Podcast, En-Vi CS** | **Extreme Speed** |
+| **Clone-voice-TTS-v2-Turbo** | GGUF/ONNX | **CPU/Edge** | ✅ | Lightweight En-Vi | **Ultra Fast** |
+| **Clone-voice-TTS (v1)** | PyTorch | GPU/CPU | ❌ | Stable (Vi only) | Standard |
 
 ---
 
 ## 🚀 5. Roadmap <a name="roadmap"></a>
 
-- [x] **VieNeu-TTS-v2**: Full high-fidelity bilingual architecture with **Podcast Mode** and **Voice Cloning**.
+- [x] **Clone-voice-TTS-v2**: Full high-fidelity bilingual architecture with **Podcast Mode** and **Voice Cloning**.
 - [x] **VieNeu-Codec**: Optimized neural codec for Vietnamese (ONNX).
 - [x] **Turbo Voice Cloning**: Bringing instant cloning to the lightweight Turbo engine.
-- [x] **VieNeu-TTS v3 Turbo (early access)**: New from-scratch 48 kHz architecture — built-in default voices (speaker tokens), experimental emotion cues, batched generation & multi-speaker conversation.
-- [ ] **VieNeu-TTS v3 (full release)**: Complete v3 with finalized quality, stable emotion control, more default voices & streaming server.
+- [x] **Clone-voice-TTS v3 Turbo (early access)**: New from-scratch 48 kHz architecture — built-in default voices (speaker tokens), experimental emotion cues, batched generation & multi-speaker conversation.
+- [ ] **Clone-voice-TTS v3 (full release)**: Complete v3 with finalized quality, stable emotion control, more default voices & streaming server.
 - [ ] **Mobile SDK**: Official support for Android/iOS deployment.
 
 ---
@@ -409,7 +409,7 @@ This version:
 
 ```bibtex
 @misc{vieneutts_clone2026,
-  title        = {VieNeu-TTS (extended): voice cloning from video, API server and accent tuning},
+  title        = {Clone-voice-TTS: voice cloning from video, API server and accent tuning},
   author       = {Tran Trong Thanh Tung and Huu Tien},
   year         = {2026},
   howpublished = {\url{https://github.com/huutien1904/clone-voice}},

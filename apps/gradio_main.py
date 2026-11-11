@@ -9,7 +9,7 @@ if sys.platform == "win32":
         sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding="utf-8", errors="replace")
 
 import gradio as gr
-print("⏳ Đang khởi động VieNeu-TTS... Vui lòng chờ...")
+print("⏳ Đang khởi động Clone-voice-TTS... Vui lòng chờ...")
 import soundfile as sf
 import tempfile
 from vieneu import Vieneu
@@ -79,15 +79,15 @@ except ImportError:
 
 filtered_backbones = {}
 
-# VieNeu-TTS v3 Turbo (early access) — PyTorch, runs on both CPU and GPU.
+# Clone-voice-TTS v3 Turbo (early access) — PyTorch, runs on both CPU and GPU.
 if not HAS_GPU:
-    filtered_backbones["VieNeu-TTS-v3-Turbo (int8)"] = {
+    filtered_backbones["Clone-voice-TTS-v3-Turbo (int8)"] = {
         "repo": "pnnbao-ump/VieNeu-TTS-v3-Turbo",
         "precision": "int8",
         "supports_streaming": False,
         "description": "🆕 v3 Turbo (int8) — 48kHz, TỐI ƯU CHO CPU: nhanh nhất (backbone nén int8, ~3x/frame, nhẹ 4x). Khuyến nghị cho máy CPU. Giọng mặc định dùng speaker token; Voice Cloning clone từ audio mẫu; tag cảm xúc [cười]/[hắng giọng]/[thở dài] (thử nghiệm)."
     }
-filtered_backbones["VieNeu-TTS-v3-Turbo"] = {
+filtered_backbones["Clone-voice-TTS-v3-Turbo"] = {
     "repo": "pnnbao-ump/VieNeu-TTS-v3-Turbo",
     "precision": "fp32",
     "supports_streaming": False,
@@ -98,18 +98,18 @@ filtered_backbones["VieNeu-TTS-v3-Turbo"] = {
     )
 }
 
-# GPU-only extras. On GPU the default is VieNeu-TTS-v2 (GPU); v3 Turbo stays the
+# GPU-only extras. On GPU the default is Clone-voice-TTS-v2 (GPU); v3 Turbo stays the
 # default (and only option) on CPU machines (the v2/v1 GGUF CPU builds were removed).
 if HAS_GPU:
-    filtered_backbones["VieNeu-TTS-v2 (GPU)"] = {
+    filtered_backbones["Clone-voice-TTS-v2 (GPU)"] = {
         "repo": "pnnbao-ump/VieNeu-TTS-v2",
         "supports_streaming": False,
-        "description": "VieNeu-TTS Version 2 - hỗ trợ song ngữ (Anh-Việt) và chế độ podcast"
+        "description": "Clone-voice-TTS Version 2 - hỗ trợ song ngữ (Anh-Việt) và chế độ podcast"
     }
-    filtered_backbones["VieNeu-TTS (GPU)"] = {
+    filtered_backbones["Clone-voice-TTS (GPU)"] = {
         "repo": "pnnbao-ump/VieNeu-TTS",
         "supports_streaming": False,
-        "description": "VieNeu-TTS Version 1 - ổn định, production-ready"
+        "description": "Clone-voice-TTS Version 1 - ổn định, production-ready"
     }
 
 BACKBONE_CONFIGS = filtered_backbones
@@ -178,8 +178,8 @@ DEVICE_LABELS = {
     "MPS": "Chip Apple (GPU)",
 }
 BACKBONE_LABELS = {
-    "VieNeu-TTS-v3-Turbo (int8)": "VieNeu-TTS v3 · Nhanh (khuyên dùng)",
-    "VieNeu-TTS-v3-Turbo": "VieNeu-TTS v3 · Chất lượng cao nhất (chậm hơn)",
+    "Clone-voice-TTS-v3-Turbo (int8)": "Clone-voice-TTS v3 · Nhanh (khuyên dùng)",
+    "Clone-voice-TTS-v3-Turbo": "Clone-voice-TTS v3 · Chất lượng cao nhất (chậm hơn)",
     "Custom Model": "Model tuỳ chỉnh (nâng cao)",
 }
 NOT_LOADED_MSG = ("⏳ Chưa tải model. Mở mục **🛠️ Cài đặt mô hình** rồi bấm **🔄 Tải Model** "
@@ -269,12 +269,12 @@ def _running_on() -> str:
 def _supports_cloning(backbone_choice: str) -> bool:
     """Voice Cloning availability by model.
 
-    v3+ clones directly from a sample audio; VieNeu-TTS-v2 (GPU) clones from
+    v3+ clones directly from a sample audio; Clone-voice-TTS-v2 (GPU) clones from
     audio plus a reference transcript. v1 and the CPU/Turbo builds stay
     preset-only.
     """
     c = (backbone_choice or "").lower()
-    return "v3" in c or c == "vieneu-tts-v2 (gpu)"
+    return "v3" in c or c == "clone-voice-tts-v2 (gpu)"
 
 def get_model_status_message() -> str:
     """Thông báo trạng thái model bằng lời dễ hiểu (không có thuật ngữ backend/codec)."""
@@ -402,7 +402,7 @@ def _ready_ui_updates(backbone_choice: str) -> tuple:
     """Cập nhật giao diện sau khi model đã sẵn sàng (mọi output của nút Tải Model, trừ dòng trạng thái):
     bật nút, điền danh sách giọng, hiện tab clone/hội thoại. Dùng cả khi một phiên mới mở trang."""
     voice_update, slot_dd_update = _voice_choice_updates()
-    is_v2 = backbone_choice in ("VieNeu-TTS-v2 (GPU)", "VieNeu-TTS-v2 (CPU)")
+    is_v2 = backbone_choice in ("Clone-voice-TTS-v2 (GPU)", "Clone-voice-TTS-v2 (CPU)")
     is_v3 = "v3" in (backbone_choice or "").lower()
     return (
         gr.update(interactive=True),   # btn_generate
@@ -540,7 +540,7 @@ def preview_voice(voice_choice):
         gr.Warning("Hãy chọn một giọng trước.")
         return gr.update(visible=False)
     if "v3" not in (current_backbone or "").lower():
-        gr.Warning("Nghe thử chỉ có với mô hình VieNeu-TTS v3.")
+        gr.Warning("Nghe thử chỉ có với mô hình Clone-voice-TTS v3.")
         return gr.update(visible=False)
     try:
         v_id = resolve_voice_id(voice_choice)
@@ -687,9 +687,9 @@ def _load_model_impl(backbone_choice: str, codec_choice: str, device_choice: str
                  use_lmdeploy = force_lmdeploy and should_use_lmdeploy(custom_base_model, device_choice)
              else:
                  # Full custom model (e.g. finetune)
-                 use_lmdeploy = force_lmdeploy and should_use_lmdeploy("VieNeu-TTS (GPU)", device_choice) # Assume GPU compatible?
+                 use_lmdeploy = force_lmdeploy and should_use_lmdeploy("Clone-voice-TTS (GPU)", device_choice) # Assume GPU compatible?
         # Use LMDeploy only if Force LMDeploy is set and the model is compatible
-        # NOTE: For VieNeu-v2-Turbo, we handle LMDeploy inside TurboGPUVieNeuTTS class, 
+        # NOTE: For Clone-voice-TTS-v2-Turbo, we handle LMDeploy inside TurboGPUVieNeuTTS class, 
         # so we set use_lmdeploy = False here to avoid generic FastVieNeuTTS loading.
         # NOTE: For custom_loading, the block above already decided use_lmdeploy correctly
         # (e.g. False for GGUF repos). Do NOT override that decision here.
@@ -913,7 +913,7 @@ def _load_model_impl(backbone_choice: str, codec_choice: str, device_choice: str
             print(f"   Codec: {codec_config['repo']} on {codec_device}")
             
             if "v3-Turbo" in backbone_choice:
-                # VieNeu v3 Turbo. CPU → ONNX Runtime; GPU → PyTorch. The backend is
+                # Clone-voice-TTS v3 Turbo. CPU → ONNX Runtime; GPU → PyTorch. The backend is
                 # auto-selected from the device inside Vieneu(mode="v3turbo"); ONNX
                 # graphs are fetched from the model repo's onnx/ subfolder.
                 print("   🆕 Mode: v3 Turbo (CPU=ONNX / GPU=PyTorch)")
@@ -931,7 +931,7 @@ def _load_model_impl(backbone_choice: str, codec_choice: str, device_choice: str
                     hf_token=custom_hf_token,
                 )
             elif "v2-Turbo" in backbone_choice:
-                # VieNeu v2 Turbo uses the dedicated backend
+                # Clone-voice-TTS v2 Turbo uses the dedicated backend
                 print("   ⚡ Mode: Turbo")
                 mode = "turbo_gpu" if "GPU" in backbone_choice else "turbo"
                 tts = Vieneu(
@@ -1237,7 +1237,7 @@ def _save_voice_core(custom_audio, name, description, denoise_ref, accent, accen
         yield from fail("❌ Chức năng lưu giọng đang tắt trên link chia sẻ này.")
         return
     if "v3" not in (current_backbone or "").lower() or not hasattr(tts, "add_voice"):
-        yield from fail("❌ Chỉ lưu được giọng khi dùng mô hình VieNeu-TTS v3.")
+        yield from fail("❌ Chỉ lưu được giọng khi dùng mô hình Clone-voice-TTS v3.")
         return
     if not custom_audio:
         yield from fail("❌ Bạn chưa ghi âm hoặc tải lên giọng mẫu.")
@@ -1428,7 +1428,7 @@ def _synthesize_emotion(text, set_name, default_emotion, temperature, max_chars_
         yield None, "❌ Giọng cảm xúc đang tắt trên link chia sẻ này."
         return
     if "v3" not in (current_backbone or "").lower():
-        yield None, "❌ Đọc theo cảm xúc chỉ có với mô hình VieNeu-TTS v3."
+        yield None, "❌ Đọc theo cảm xúc chỉ có với mô hình Clone-voice-TTS v3."
         return
     sets = _current_emotion_sets()
     if not set_name or set_name not in sets:
@@ -1583,7 +1583,7 @@ def synthesize_speech(text: str, voice_choice: str, custom_audio, custom_text: s
     # === STANDARD MODE ===
     if generation_mode == "Standard (Một lần)":
         # ============================ v3 TURBO BRANCH ========================
-        # VieNeu-TTS v3 Turbo: split the text into chunks and run them through the
+        # Clone-voice-TTS v3 Turbo: split the text into chunks and run them through the
         # batched serving engine (vieneu.v3_turbo_serve) so multiple chunks share
         # each forward step (big GPU throughput win at Batch Size 32). Falls back
         # to single-utterance generation on CPU / 1 chunk / batching disabled.
@@ -2448,7 +2448,7 @@ EXAMPLES_LIST = [
     ["Hà Nội những ngày vào thu mang một vẻ đẹp trầm mặc và cổ kính đến lạ thường.", "Bình (nam miền Bắc)"],
 ]
 
-with gr.Blocks(theme=theme, css=css, title="VieNeu-TTS", head=head_html) as demo:
+with gr.Blocks(theme=theme, css=css, title="Clone-voice-TTS", head=head_html) as demo:
     # Session ID for cancellation tracking
     session_id_state = gr.State("")
 
@@ -2457,7 +2457,7 @@ with gr.Blocks(theme=theme, css=css, title="VieNeu-TTS", head=head_html) as demo
 <div class="header-box">
     <h1 class="header-title">
         <span class="header-icon">🦜</span>
-        <span class="gradient-text">VieNeu-TTS Studio</span>
+        <span class="gradient-text">Clone-voice-TTS Studio</span>
     </h1>
     <p class="header-subtitle">Biến chữ thành giọng nói tiếng Việt: <b>nhập văn bản</b> → <b>chọn giọng</b> → <b>bấm Đọc</b>.
     Có thể dùng cả <b>giọng của chính bạn</b>.</p>
@@ -2483,7 +2483,7 @@ with gr.Blocks(theme=theme, css=css, title="VieNeu-TTS", head=head_html) as demo
             with gr.Group():
                 with gr.Row():
                     # --- BACKBONE & CODEC DEFAULT LOGIC ---
-                    # GPU users default to VieNeu-TTS-v3-Turbo (GPU); CPU-only users get v3 Turbo
+                    # GPU users default to Clone-voice-TTS-v3-Turbo (GPU); CPU-only users get v3 Turbo
                     # (the only CPU backbone). v3 (GPU) is registered solely when HAS_GPU.
                     # int8 là entry đầu tiên → mặc định trên cả CPU lẫn GPU (trên GPU dùng
                     # PyTorch nên int8/fp32 như nhau; trên CPU int8 nhanh nhất).
@@ -2567,7 +2567,7 @@ with gr.Blocks(theme=theme, css=css, title="VieNeu-TTS", head=head_html) as demo
             
             
                 gr.Markdown("""
-                💡 **Sử dụng Custom Model:** Chọn "Custom Model" để tải LoRA adapter hoặc bất kỳ model nào được finetune từ **VieNeu-TTS** hoặc **VieNeu-TTS-0.3B**.
+                💡 **Sử dụng Custom Model:** Chọn "Custom Model" để tải LoRA adapter hoặc bất kỳ model nào được finetune từ **Clone-voice-TTS** hoặc **Clone-voice-TTS-0.3B**.
                 """)
             
                 gr.HTML("""
@@ -2579,13 +2579,13 @@ with gr.Blocks(theme=theme, css=css, title="VieNeu-TTS", head=head_html) as demo
                         <div class="warning-banner-item">
                             <strong>🐆 Hệ máy GPU</strong>
                             <div class="warning-banner-content">
-                                <b>VieNeu-TTS-v3-Turbo (early access)</b> đã được phát hành để dùng thử trước, đã hỗ trợ các tag cảm xúc `[cười]` `[hắng giọng]` `[thở dài]`, tuy nhiên những tính năng này vẫn đang được thử nghiệm và chưa thực sự ổn định, có thể sẽ xảy ra lỗi không mong muốn, nếu có lỗi các bạn hãy thông báo với chúng tôi tại: https://discord.com/invite/yJt8kzjzWZ. Trong trường hợp bạn cần sự ổn định hãy sử dụng <b>VieNeu-TTS-v2 (GPU)</b>. 
+                                <b>Clone-voice-TTS-v3-Turbo (early access)</b> đã được phát hành để dùng thử trước, đã hỗ trợ các tag cảm xúc `[cười]` `[hắng giọng]` `[thở dài]`, tuy nhiên những tính năng này vẫn đang được thử nghiệm và chưa thực sự ổn định, có thể sẽ xảy ra lỗi không mong muốn, nếu có lỗi các bạn hãy thông báo với chúng tôi tại: https://discord.com/invite/yJt8kzjzWZ. Trong trường hợp bạn cần sự ổn định hãy sử dụng <b>Clone-voice-TTS-v2 (GPU)</b>. 
                             </div>
                         </div>
                         <div class="warning-banner-item" style="background: #dcfce7; border-color: #86efac;">
                             <strong style="color: #15803d;">🐢 Hệ máy CPU</strong>
                             <div class="warning-banner-content" style="color: #166534;">
-                                Máy <b>CPU</b> nên dùng bản <b>VieNeu-TTS-v3-Turbo (int8)</b> để tốc độ tối đa. Chuyển sang <b>VieNeu-TTS-v3-Turbo</b> nếu cần chất lượng cao hơn (nhưng chậm hơn trên CPU).
+                                Máy <b>CPU</b> nên dùng bản <b>Clone-voice-TTS-v3-Turbo (int8)</b> để tốc độ tối đa. Chuyển sang <b>Clone-voice-TTS-v3-Turbo</b> nếu cần chất lượng cao hơn (nhưng chậm hơn trên CPU).
                             </div>
                         </div>
                     </div>
@@ -2596,7 +2596,7 @@ with gr.Blocks(theme=theme, css=css, title="VieNeu-TTS", head=head_html) as demo
                 """)
 
                 gr.Markdown(
-                    "🆕 **VieNeu-TTS-v3-Turbo (early access)** đã được phát hành để **dùng thử trước** — "
+                    "🆕 **Clone-voice-TTS-v3-Turbo (early access)** đã được phát hành để **dùng thử trước** — "
                     "48kHz, **hỗ trợ Voice Cloning** (tính năng clone chỉ có từ **v3** trở lên; v1/v2 không hỗ trợ). "
                     "Bản **v3 đầy đủ** sẽ ra mắt trong **vài tuần tới**.\n\n"
                     "🎭 v3 Turbo đã **hỗ trợ các tag cảm xúc** `[cười]` `[hắng giọng]` `[thở dài]` "
@@ -2665,10 +2665,10 @@ with gr.Blocks(theme=theme, css=css, title="VieNeu-TTS", head=head_html) as demo
                                 # on_backbone_change only fires when the dropdown changes, so a
                                 # v2-GPU default would otherwise keep v3's "no transcript" copy
                                 # and a hidden reference-text box (-> false "missing ref text").
-                                _default_is_v2_gpu = (default_backbone == "VieNeu-TTS-v2 (GPU)")
+                                _default_is_v2_gpu = (default_backbone == "Clone-voice-TTS-v2 (GPU)")
                                 _default_is_v3 = "v3" in (default_backbone or "").lower()
                                 clone_info_md = gr.Markdown(
-                                    "ℹ️ **Voice Cloning (VieNeu-TTS v2).** Tải lên audio mẫu 3–5 giây "
+                                    "ℹ️ **Voice Cloning (Clone-voice-TTS v2).** Tải lên audio mẫu 3–5 giây "
                                     "và **nhập đúng nội dung** của audio đó (kể cả dấu câu) — v2 cần "
                                     "reference transcript để clone giọng."
                                     if _default_is_v2_gpu else CLONE_GUIDE_V3
@@ -2995,7 +2995,7 @@ with gr.Blocks(theme=theme, css=css, title="VieNeu-TTS", head=head_html) as demo
         def on_backbone_change(choice):
             is_custom = (choice == "Custom Model")
             is_v3 = "v3" in (choice or "").lower()
-            is_v2_gpu = (choice == "VieNeu-TTS-v2 (GPU)")
+            is_v2_gpu = (choice == "Clone-voice-TTS-v2 (GPU)")
             # Voice Cloning: v3 clones from audio only; v2 (GPU) clones from
             # audio + a reference transcript. Both expose the cloning tab.
             clone_ok = is_v3 or is_v2_gpu
@@ -3036,7 +3036,7 @@ with gr.Blocks(theme=theme, css=css, title="VieNeu-TTS", head=head_html) as demo
             # Reference-transcript box + info text differ between v2 and v3 clone.
             if is_v2_gpu:
                 clone_info_update = gr.update(value=(
-                    "ℹ️ **Voice Cloning (VieNeu-TTS v2).** Tải lên audio mẫu 3–5 giây "
+                    "ℹ️ **Voice Cloning (Clone-voice-TTS v2).** Tải lên audio mẫu 3–5 giây "
                     "và **nhập đúng nội dung** của audio đó (kể cả dấu câu) — v2 cần "
                     "reference transcript để clone giọng."
                 ))

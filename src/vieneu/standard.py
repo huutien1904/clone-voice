@@ -14,7 +14,7 @@ logger = logging.getLogger("Vieneu.Standard")
 
 class VieNeuTTS(BaseVieneuTTS):
     """
-    Standard VieNeu-TTS implementation.
+    Standard Clone-voice-TTS implementation.
     Supports PyTorch + Transformers backend and GGUF quantized models.
     """
 

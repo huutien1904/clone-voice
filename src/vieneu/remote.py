@@ -14,7 +14,7 @@ logger = logging.getLogger("Vieneu.Remote")
 
 class RemoteVieNeuTTS(BaseVieneuTTS):
     """
-    Client for VieNeu-TTS running on a remote LMDeploy server.
+    Client for Clone-voice-TTS running on a remote LMDeploy server.
     """
 
     def __init__(

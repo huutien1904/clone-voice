@@ -35,7 +35,7 @@ def _load_ref_mono(ref_audio_path: Union[str, Path], target_sr: int) -> np.ndarr
 
 class BaseVieneuTTS(ABC):
     """
-    Abstract base class for VieNeu-TTS implementations.
+    Abstract base class for Clone-voice-TTS implementations.
     Provides shared functionality for voice management and common operations.
     """
 
@@ -415,7 +415,7 @@ class BaseVieneuTTS(ABC):
 
         Args:
             use_chat_format: If True, wraps the prompt with chat-style user/assistant
-                             tokens (used by VieNeu-TTS GPU model). If False (default),
+                             tokens (used by Clone-voice-TTS GPU model). If False (default),
                              returns a compact prompt without those wrappers.
         """
         ref_codes_list = self.to_list(ref_codes)

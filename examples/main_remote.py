@@ -1,5 +1,5 @@
 """
-VieNeu-TTS SDK Example: Remote Mode
+Clone-voice-TTS SDK Example: Remote Mode
 Version: 1.1.6
 """
 
@@ -7,7 +7,7 @@ from vieneu import Vieneu
 import os
 
 def main():
-    print("🚀 Initializing VieNeu Remote Client...")
+    print("🚀 Initializing Clone-voice-TTS Remote Client...")
     
     # ---------------------------------------------------------
     # PART 0: PRE-REQUISITES & CONFIG
@@ -74,7 +74,7 @@ def main():
     # PART 4: REMOTE SPEECH SYNTHESIS (DEFAULT)
     # ---------------------------------------------------------
     print("\n--- PART 4: Standard Synthesis (Default) ---")
-    text_input = "Chế độ remote giúp tích hợp VieNeu vào ứng dụng Web hoặc App cực nhanh mà không cần GPU tại máy khách."
+    text_input = "Chế độ remote giúp tích hợp Clone-voice-TTS vào ứng dụng Web hoặc App cực nhanh mà không cần GPU tại máy khách."
     
     print("🎧 Sending synthesis request to server...")
     # The SDK handles splitting long text and joining results automatically
@@ -95,7 +95,7 @@ def main():
         print("\n--- PART 5: Remote Voice Cloning ---")
         print(f"🦜 Encoding {ref_audio} locally and sending codes to server...")
         cloned_audio = vieneu.infer(
-            text="Đây là giọng nói được clone và xử lý thông qua VieNeu Server.",
+            text="Đây là giọng nói được clone và xử lý thông qua Clone-voice-TTS Server.",
             ref_audio=ref_audio,
             ref_text=ref_text
         )

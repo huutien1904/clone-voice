@@ -1,7 +1,7 @@
 """
-VieNeu-TTS SDK Example: Standard Mode (Local Inference)
+Clone-voice-TTS SDK Example: Standard Mode (Local Inference)
 
-This example demonstrates how to run VieNeu-TTS locally on your machine.
+This example demonstrates how to run Clone-voice-TTS locally on your machine.
 Ideal for offline apps, local development, or private deployments.
 """
 
@@ -9,7 +9,7 @@ from vieneu import Vieneu
 import os
 
 def main():
-    print("🚀 Initializing local VieNeu engine...")
+    print("🚀 Initializing local Clone-voice-TTS engine...")
     
     os.makedirs("outputs", exist_ok=True)
     
@@ -58,7 +58,7 @@ def main():
     # PART 4: STANDARD SPEECH SYNTHESIS (DEFAULT)
     # ---------------------------------------------------------
     print("\n--- PART 4: Standard Synthesis (Default) ---")
-    text = "Xin chào, tôi là VieNeu. Tôi có thể giúp bạn đọc sách, làm chatbot thời gian thực, hoặc thậm chí clone giọng nói của bạn."
+    text = "Xin chào, tôi là Clone-voice-TTS. Tôi có thể giúp bạn đọc sách, làm chatbot thời gian thực, hoặc thậm chí clone giọng nói của bạn."
     
     print("🎧 Synthesizing speech...")
     # By default, it uses the model's 'default_voice'

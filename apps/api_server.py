@@ -1,5 +1,5 @@
 """
-VieNeu-TTS HTTP API (FastAPI)
+Clone-voice-TTS HTTP API (FastAPI)
 =============================
 API để ứng dụng khác gọi TTS bằng giọng có sẵn hoặc giọng đã clone (giọng người
 dùng lưu bền trong ``~/.cache/vieneu/user_voices.json`` hoặc ``$VIENEU_USER_VOICES``).
@@ -104,7 +104,7 @@ _pending = 0   # số request đang chờ/đang chạy engine (để trả 429 k
 
 # ── Model lifecycle ─────────────────────────────────────────────────────────────
 def load_tts(threads: int = 0):
-    """Nạp VieNeu v3 Turbo (ONNX/CPU khi không có torch, PyTorch khi có GPU)."""
+    """Nạp Clone-voice-TTS v3 Turbo (ONNX/CPU khi không có torch, PyTorch khi có GPU)."""
     from vieneu import Vieneu
     kwargs = {}
     if threads and threads > 0:
@@ -116,7 +116,7 @@ def load_tts(threads: int = 0):
 async def lifespan(app: FastAPI):
     if getattr(app.state, "tts", None) is None:
         t0 = time.time()
-        print("⏳ Đang nạp VieNeu-TTS v3 Turbo...", flush=True)
+        print("⏳ Đang nạp Clone-voice-TTS v3 Turbo...", flush=True)
         app.state.tts = await run_in_threadpool(load_tts, app.state.threads)
         tts = app.state.tts
         voices = tts.list_voices()
@@ -134,7 +134,7 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(
-    title="VieNeu-TTS API",
+    title="Clone-voice-TTS API",
     description="TTS tiếng Việt (v3 Turbo, 48 kHz) với giọng có sẵn và giọng clone đã lưu.",
     version="1.1.0",
     lifespan=lifespan,
@@ -391,7 +391,7 @@ async def _audio_response(audio: np.ndarray, gen_s: float, voice: str, fmt: str,
 # ── Endpoints ───────────────────────────────────────────────────────────────────
 @app.get("/", include_in_schema=False)
 async def root():
-    return {"name": "VieNeu-TTS API", "model": MODEL_ID, "docs": "/docs",
+    return {"name": "Clone-voice-TTS API", "model": MODEL_ID, "docs": "/docs",
             "endpoints": ["/health", "/voices", "/tts", "/tts/stream", "/v1/audio/speech", "/v1/models"]}
 
 
@@ -547,7 +547,7 @@ async def openai_models():
 
 # ── CLI ─────────────────────────────────────────────────────────────────────────
 def main(argv=None) -> None:
-    p = argparse.ArgumentParser(description="VieNeu-TTS HTTP API server")
+    p = argparse.ArgumentParser(description="Clone-voice-TTS HTTP API server")
     p.add_argument("--host", default=os.getenv("VIENEU_API_HOST", "127.0.0.1"),
                    help="0.0.0.0 để mở ra mạng (mặc định 127.0.0.1)")
     p.add_argument("--port", type=int, default=_env_int("VIENEU_API_PORT", 8000))
@@ -568,7 +568,7 @@ def main(argv=None) -> None:
     if args.host not in ("127.0.0.1", "localhost") and not app.state.api_key:
         print("⚠️  Server mở ra mạng mà không có API key. Đặt --api-key hoặc VIENEU_API_KEY nếu VPS có IP public.",
               flush=True)
-    print(f"🌍 VieNeu-TTS API: http://{args.host}:{args.port}  (docs: /docs)", flush=True)
+    print(f"🌍 Clone-voice-TTS API: http://{args.host}:{args.port}  (docs: /docs)", flush=True)
     uvicorn.run(app, host=args.host, port=args.port, log_level="info")
 
 

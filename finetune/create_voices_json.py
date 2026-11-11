@@ -42,7 +42,7 @@ def create_voices_json(audio_path, text, voice_name, output_path="voices.json", 
             "meta": {
                 "spec": "vieneu.voice.presets",
                 "spec_version": "1.0",
-                "engine": "VieNeu-TTS",
+                "engine": "Clone-voice-TTS",
                 "author": "Phạm Nguyễn Ngọc Bảo (pnnbao-ump)",
                 "license": "CC BY-NC 4.0",
                 "homepage": "https://github.com/pnnbao97/VieNeu-TTS",
@@ -52,7 +52,7 @@ def create_voices_json(audio_path, text, voice_name, output_path="voices.json", 
             "presets": {}
         }
     
-    # Load DistillNeuCodec (same codec VieNeu-TTS uses at inference)
+    # Load DistillNeuCodec (same codec Clone-voice-TTS uses at inference)
     print("   🔊 Loading DistillNeuCodec...")
     device = "cuda" if torch.cuda.is_available() else "cpu"
     codec = DistillNeuCodec.from_pretrained("neuphonic/distill-neucodec").to(device)

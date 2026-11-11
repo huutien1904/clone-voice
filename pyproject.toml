@@ -64,7 +64,7 @@ authors = [
     { name = "Hữu Tiến" },
 ]
 requires-python = ">=3.10"
-# Minimal, TORCH-FREE core. `pip install vieneu` runs VieNeu-TTS v3 Turbo on CPU
+# Minimal, TORCH-FREE core. `pip install vieneu` runs Clone-voice-TTS v3 Turbo on CPU
 # via ONNX Runtime. GPU is a manual step (install a CUDA torch + transformers
 # yourself — there is no [gpu] extra; see [project.optional-dependencies] below);
 # legacy backends (llama-cpp, lmdeploy, librosa, neucodec) live in the [legacy] extra.
