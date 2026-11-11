@@ -4,7 +4,7 @@
     {
       "name": "vieneu-web",
       "runtimeExecutable": "uv",
-      "runtimeArgs": ["run", "vieneu-web"],
+      "runtimeArgs": ["run", "--frozen", "--extra", "pdf", "vieneu-web"],
       "port": 7860
     }
   ]

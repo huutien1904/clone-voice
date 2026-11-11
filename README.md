@@ -2,6 +2,9 @@
 
 > Developed by **Trần Trọng Thanh Tùng** & **Hữu Tiến**, based on [VieNeu-TTS](https://github.com/pnnbao97/VieNeu-TTS) by **Phạm Nguyễn Ngọc Bảo** (Apache 2.0). See [NOTICE](NOTICE).
 
+> [!TIP]
+> **Không biết code? Làm theo [Hướng dẫn cài và dùng Clone-voice-TTS](HUONG_DAN.md)**: chỉ cần ứng dụng Claude trên máy tính (gói Pro trở lên) và dán một đoạn có sẵn, có ảnh minh hoạ từng bước.
+
 [![Awesome](https://img.shields.io/badge/Awesome-NLP-green?logo=github)](https://github.com/keon/awesome-nlp)
 [![Discord](https://img.shields.io/badge/Discord-Join%20Us-5865F2?logo=discord&logoColor=white)](https://discord.gg/yJt8kzjzWZ)
 
@@ -81,18 +84,20 @@ curl -LsSf https://astral.sh/uv/install.sh | sh
      >
      > 🍎 **macOS users: use this option too.** For v3 Turbo the torch-free ONNX path on the CPU is *faster* than the MPS/PyTorch build (`--group gpu`), so prefer `uv sync` for top speed on Apple Silicon.
      ```bash
-     uv sync
+     uv sync --frozen --extra pdf
      ```
+     > ⚠️ Always pass `--frozen`: without it uv fails with a 404 looking up an optional wheel (`llama_cpp_python`) that was removed from GitHub.
    - **Option 2: GPU** — **v3 Turbo on GPU (PyTorch)**
      > 💡 *Requires a CUDA NVIDIA GPU (CUDA ≥ 12.8) or Apple Silicon MPS. [NVIDIA Toolkit](https://developer.nvidia.com/cuda-downloads) recommended. Adds the PyTorch stack so **v3 Turbo runs on GPU** — inference is batched automatically on CUDA (same API, no code change).*
 
      ```bash
      uv sync --group gpu
      ```
+     > ⚠️ On Windows this option currently fails with a 404 (the `llama_cpp_python` wheel was removed from GitHub). Use Option 1.
 
 3. **Start the Web UI:**
    ```bash
-   uv run vieneu-web
+   uv run --frozen --extra pdf vieneu-web
    ```
    Access the UI at `http://127.0.0.1:7860`.
 

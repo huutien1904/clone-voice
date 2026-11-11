@@ -2,6 +2,9 @@
 
 > Phát triển bởi **Trần Trọng Thanh Tùng** & **Hữu Tiến**, dựa trên [VieNeu-TTS](https://github.com/pnnbao97/VieNeu-TTS) của tác giả **Phạm Nguyễn Ngọc Bảo** (Apache 2.0). Xem [NOTICE](NOTICE).
 
+> [!TIP]
+> **Không biết code? Làm theo [Hướng dẫn cài và dùng Clone-voice-TTS](HUONG_DAN.md)**: chỉ cần ứng dụng Claude trên máy tính (gói Pro trở lên) và dán một đoạn có sẵn, có ảnh minh hoạ từng bước.
+
 [![Awesome](https://img.shields.io/badge/Awesome-NLP-green?logo=github)](https://github.com/keon/awesome-nlp)
 [![Discord](https://img.shields.io/badge/Discord-Join%20Us-5865F2?logo=discord&logoColor=white)](https://discord.gg/yJt8kzjzWZ)
 
@@ -68,18 +71,20 @@ curl -LsSf https://astral.sh/uv/install.sh | sh
      >
      > 🍎 **Người dùng macOS: cũng dùng lựa chọn này.** Với v3 Turbo, đường ONNX không-torch chạy trên CPU *nhanh hơn* bản MPS/PyTorch (`--group gpu`), nên hãy ưu tiên `uv sync` để đạt tốc độ cao nhất trên Apple Silicon.
      ```bash
-     uv sync
+     uv sync --frozen --extra pdf
      ```
+     > ⚠️ Luôn kèm `--frozen`: thiếu nó, uv sẽ lỗi 404 khi tìm một gói phụ (`llama_cpp_python`) đã bị gỡ khỏi GitHub.
    - **Lựa chọn 2: GPU** — **v3 Turbo chạy trên GPU (PyTorch)**
      > 💡 *Yêu cầu GPU NVIDIA CUDA (CUDA ≥ 12.8) hoặc Apple Silicon MPS. Khuyến nghị cài [NVIDIA Toolkit](https://developer.nvidia.com/cuda-downloads). Thêm bộ PyTorch để **v3 Turbo chạy trên GPU** — trên CUDA suy luận được **batch tự động** (cùng API, không đổi code).*
 
      ```bash
      uv sync --group gpu
      ```
+     > ⚠️ Trên Windows lựa chọn này hiện lỗi 404 (gói `llama_cpp_python` đã bị gỡ khỏi GitHub). Dùng Lựa chọn 1.
 
 3. **Khởi chạy Giao diện Web:**
    ```bash
-   uv run vieneu-web
+   uv run --frozen --extra pdf vieneu-web
    ```
    Truy cập giao diện tại `http://127.0.0.1:7860`.
 
