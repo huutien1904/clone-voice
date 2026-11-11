@@ -4,6 +4,8 @@ theme = gr.themes.Soft(
     primary_hue="indigo",
     secondary_hue="cyan",
     neutral_hue="slate",
+    # Chữ to hơn cho dễ đọc; ô nhập 16px nên iPhone không tự phóng to trang khi chạm vào.
+    text_size="lg",
     font=[gr.themes.GoogleFont('Inter'), 'ui-sans-serif', 'system-ui'],
 ).set(
     button_primary_background_fill="linear-gradient(90deg, #6366f1 0%, #0ea5e9 100%)",
@@ -11,7 +13,40 @@ theme = gr.themes.Soft(
 )
 
 css = """
-.container { max-width: 1400px; margin: auto; }
+.container { max-width: 1000px; margin: auto; }
+/* --- Giao diện cho người mới: các bước ①②③, dòng trạng thái, khung kết quả --- */
+.header-subtitle { color: #cbd5e1 !important; font-size: 1.05rem; margin: 6px 0 12px; }
+.header-subtitle b { color: #ffffff !important; }
+.status-bar {
+    padding: 10px 16px;
+    border-radius: 10px;
+    background: var(--color-accent-soft);
+    border: 1px solid var(--border-color-accent);
+    margin: 4px 0 10px;
+    font-size: 1rem;
+}
+.step-title h3 { margin: 14px 0 2px !important; font-size: 1.15rem !important; }
+.hint { font-size: 0.9rem; color: var(--body-text-color-subdued); }
+.big-btn { font-size: 1.15rem !important; min-height: 52px; }
+.result-card {
+    border: 1px solid var(--border-color-primary);
+    border-radius: 12px;
+    padding: 12px 16px;
+    background: var(--background-fill-secondary);
+    margin-top: 12px;
+}
+.status-md { font-size: 1rem; }
+.header-box, .model-card-content, .warning-banner, .status-bar { overflow-wrap: anywhere; }
+/* Ẩn chân trang mặc định của Gradio ("Use via API · Built with Gradio") cho người dùng phổ thông. */
+footer { display: none !important; }
+@media (max-width: 640px) {
+    .header-box { padding: 16px 12px; margin-bottom: 12px; }
+    .header-title { font-size: 1.6rem; }
+    .header-subtitle { font-size: 0.95rem; }
+    .model-card-content { flex-direction: column; gap: 4px; font-size: 0.85rem; }
+    .model-card-item { flex-wrap: wrap; }
+    .warning-banner-item { min-width: 0; }
+}
 .header-box {
     text-align: center;
     margin-bottom: 25px;
@@ -151,7 +186,8 @@ DEFAULT_TEXT_TURBO = (
     "Một trong những phát minh nổi tiếng của ông là Tesla coil, một thiết bị có thể tạo ra điện áp rất cao và những tia sét nhân tạo. This device is still used today in demonstrations và trong một số ứng dụng nghiên cứu. Khi nhìn thấy những tia điện này, nhiều người cảm thấy vừa ấn tượng vừa hơi đáng sợ."
 )
 
-# v3 Turbo demo text — khoe giọng tự nhiên + tag cảm xúc [cười] (tính năng mới, thử nghiệm).
+# v3 Turbo: văn bản mẫu ngắn, không có tag cảm xúc để người mới không bị rối.
 DEFAULT_TEXT_V3 = (
-    "Xin chào mọi người! [hắng giọng] Như bạn đang nghe thấy đấy, tốc độ xử lý của mình cực kỳ nhanh và mượt mà, giúp phản hồi gần như ngay lập tức theo thời gian thực. Chính vì vậy, mình rất phù hợp để ứng dụng trực tiếp vào các hệ thống Chatbot thông minh, trợ lý ảo, hoặc làm tổng đài viên tự động cho các doanh nghiệp. Tiện lợi quá đúng không ạ? [cười] Hi vọng phiên bản nâng cấp v3 này sẽ mang lại trải nghiệm tuyệt vời cho dự án của bạn."
+    "Xin chào! Đây là giọng đọc tiếng Việt được tạo bằng trí tuệ nhân tạo. "
+    "Bạn hãy xoá đoạn này, dán nội dung của mình vào, chọn giọng rồi bấm Đọc thành tiếng nhé."
 )

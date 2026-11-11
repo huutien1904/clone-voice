@@ -8,6 +8,7 @@ tải model) và API server (``GET /voices``).
     uv run --frozen python -m apps.voice_tool add clone_A outputs/clone/mau_A.wav --description "Nam · Giọng từ video"
     uv run --frozen python -m apps.voice_tool list
     uv run --frozen python -m apps.voice_tool remove clone_A
+    uv run --frozen python -m apps.voice_tool rename clone_A "clone_bản tin vip"
     uv run --frozen python -m apps.voice_tool path
 
 Clone thẳng từ video, giống người thật hơn và giữ giọng miền Bắc:
@@ -24,8 +25,8 @@ Clone thẳng từ video, giống người thật hơn và giữ giọng miền 
   Model tự đoán giọng miền từ dấu vân giọng nên clone người Bắc có thể bị đọc giọng Nam.
 
 ``add``/``tune`` cần nạp model (~5-10 s); ``list``/``remove``/``path`` chạy tức thì.
-Đọc video/m4a cần ffmpeg trong PATH. API server/web UI đang chạy giữ giọng trong bộ
-nhớ: khởi động lại API server (web UI: bấm Tải Model) để nạp giọng vừa thêm/chỉnh.
+Đọc video/m4a cần ffmpeg trong PATH. API server/web UI đang chạy tự nhận giọng vừa
+thêm/chỉnh/đổi tên: API dùng được ngay, web thì tải lại trang (F5).
 """
 import argparse
 import json
@@ -63,7 +64,7 @@ def _read_user(path: Path) -> dict:
     if not path.exists():
         return {}
     try:
-        return json.loads(path.read_text(encoding="utf-8")).get("presets") or {}
+        return json.loads(path.read_text(encoding="utf-8-sig")).get("presets") or {}
     except Exception as e:  # noqa: BLE001
         print(f"⚠️ Không đọc được {path}: {e}")
         return {}
@@ -87,8 +88,8 @@ def _write_user(path: Path, presets: dict) -> None:
 
 
 DEFAULT_TEST_TEXT = "Xin chào, đây là giọng vừa được thêm vào danh sách. Dạo này trời ra sao, về nhà rồi gọi lại nhé."
-RESTART_HINT = ("ℹ️  API server đang chạy cần khởi động lại để nạp giọng mới "
-                "(web UI: bấm Tải Model lại).")
+RESTART_HINT = ("ℹ️  API server đang chạy dùng được giọng mới ngay; web UI đang mở thì "
+                "tải lại trang (F5) để thấy trong danh sách.")
 
 
 def _prepare_ref(src: Path, start, end) -> tuple:
@@ -223,6 +224,35 @@ def cmd_remove(args) -> int:
     return 0
 
 
+def cmd_rename(args) -> int:
+    path = _user_path()
+    user = _read_user(path)
+    old, new = args.old.strip(), args.new.strip()
+    if old not in user:
+        print(f"❌ Không có giọng người dùng tên '{old}' trong {path}")
+        return 1
+    if not new:
+        print("❌ Tên mới không được để trống.")
+        return 1
+    if new == old and args.description is None:
+        print("ℹ️ Tên mới trùng tên cũ, không đổi gì.")
+        return 0
+    if new != old and new in user:
+        print(f"❌ Đã có giọng người dùng tên '{new}'.")
+        return 1
+    if new in _builtin_names():
+        print(f"❌ '{new}' là tên giọng có sẵn, hãy chọn tên khác.")
+        return 1
+    # Giữ nguyên thứ tự và toàn bộ dữ liệu giọng (speaker_emb, codes, ...), chỉ đổi tên.
+    user = {(new if k == old else k): v for k, v in user.items()}
+    if args.description is not None:
+        user[new]["description"] = args.description
+    _write_user(path, user)
+    print(f"✏️  Đã đổi tên giọng '{old}' → '{new}'.")
+    print(RESTART_HINT)
+    return 0
+
+
 def cmd_path(args) -> int:
     print(_user_path())
     return 0
@@ -264,6 +294,12 @@ def main(argv=None) -> None:
     r = sub.add_parser("remove", help="Xoá giọng người dùng")
     r.add_argument("name")
     r.set_defaults(fn=cmd_remove)
+
+    rn = sub.add_parser("rename", help="Đổi tên giọng người dùng (giữ nguyên giọng)")
+    rn.add_argument("old", help="Tên hiện tại, vd Tùng")
+    rn.add_argument("new", help="Tên mới, vd clone_admin_Tùng")
+    rn.add_argument("--description", help="Đổi luôn mô tả hiển thị (tuỳ chọn)")
+    rn.set_defaults(fn=cmd_rename)
 
     sub.add_parser("path", help="In đường dẫn file giọng người dùng").set_defaults(fn=cmd_path)
 

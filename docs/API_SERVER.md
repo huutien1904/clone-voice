@@ -63,9 +63,10 @@ sẽ cộng dồn; kèm `--emb-from` thì luôn tính lại từ đầu. Đọc 
 
 SDK tương đương: `tts.tune_voice("Tùng", emb_audio=["video1.mp4", "video2.mp4"], accent="bac", save=True)`.
 
-API server và web UI đang chạy giữ giọng trong bộ nhớ: sau khi `add`/`tune` bằng dòng lệnh,
-khởi động lại API server (web UI: bấm Tải Model) để nạp bản mới. Server đang chạy không còn
-ghi đè giọng vừa chỉnh bằng dòng lệnh khi nó lưu một giọng khác.
+API server và web UI đang chạy tự nhận giọng vừa `add`/`tune`/`rename`/`remove` bằng dòng lệnh
+(SDK `reload_user_voices()` kiểm tra file giọng mỗi lần cần): API dùng được ngay, web UI thì
+tải lại trang. Server đang chạy không ghi đè giọng vừa chỉnh ở nơi khác và không "hồi sinh"
+giọng đã bị xoá/đổi tên khi nó lưu một giọng khác.
 
 ### Thêm giọng bằng SDK
 
@@ -86,8 +87,41 @@ tts.remove_voice("clone_A", save=True)
 
 ### Trong web UI
 
-Bấm **Tải Model**, giọng người dùng xuất hiện trong dropdown **Giọng mẫu** cùng 20 giọng có sẵn.
-Nếu web UI đang chạy khi bạn thêm giọng bằng lệnh khác, bấm Tải Model lại để nạp file mới.
+Giọng người dùng xuất hiện trong mục **👤 Giọng có sẵn** (có dấu 🎙️) cùng 20 giọng có sẵn. Thêm giọng
+bằng lệnh khác khi web đang chạy thì chỉ cần tải lại trang.
+
+Tạo giọng ngay trên web: tab **🎙️ Giọng của bạn (clone)** → ghi âm hoặc tải file/video → mục
+**💾 Lưu thành giọng riêng để dùng lại**: đặt tên, tích ô xác nhận, bấm **Lưu giọng**. Giọng lưu
+được xử lý giống hệt lúc bấm đọc (chuẩn hoá âm lượng, chọn đoạn mẫu, dấu vân giọng trung bình,
+giọng miền) và dùng được ngay qua API (`"voice": "tên"`). Chạy web cho người ngoài với
+`VIENEU_WEB_HIDE_USER_VOICES=1` để ẩn các giọng đã lưu và tắt nút lưu.
+
+### Giọng cảm xúc (đọc có ngữ điệu bằng chính giọng của bạn)
+
+Model v3 không có tham số cảm xúc: nó bắt chước cách nói của đoạn mẫu. Vì vậy "bộ giọng cảm xúc" là
+nhiều giọng đã lưu của **cùng một người**, mỗi giọng clone từ một đoạn mẫu mang một cảm xúc, tên dạng
+`"<tên bộ> · <cảm xúc>"` (vd `Hoa · ấm áp`, `Hoa · vui`).
+
+1. Tab **🎭 Giọng cảm xúc** → mục **➕ Thêm cảm xúc**: nhập tên bộ (vd `Hoa`), chọn/gõ cảm xúc, ghi âm
+   hoặc tải đoạn **5–8 giây** chỉ mang một cảm xúc, tích xác nhận, bấm **➕ Lưu cảm xúc này**. Lặp lại cho
+   từng cảm xúc (cùng người, cùng micro). Đoạn mẫu cảm xúc dùng đúng 8 giây đầu, không lấy trung bình cả
+   file như giọng thường, để khỏi trộn các cảm xúc.
+2. Chọn bộ ở mục **Đọc theo cảm xúc**, viết văn bản có thẻ rồi bấm **🔊 Đọc thành tiếng**:
+
+```
+[ấm áp] Chào bố mẹ, mình là Quỳnh Hoa, Italy Sport.
+[dừng 0.5s]
+[vui] Bố mẹ đăng kí cho con một buổi học thử miễn phí nhé!
+```
+
+- `[cảm xúc]`: đổi sang giọng cảm xúc đó của bộ; phần chưa gắn thẻ dùng "Cảm xúc mặc định".
+- `[dừng 0.5s]` / `[nghỉ 1 giây]`: chèn khoảng lặng (tối đa 5 giây).
+- `[cười]`, `[thở dài]`, `[hắng giọng]`: giữ nguyên cho model.
+- Chữ khác trong ngoặc vuông (ghi chú đạo diễn) bị bỏ qua, không đọc to; dấu `*` và số thứ tự đầu dòng
+  cũng được bỏ.
+
+Qua API: mỗi giọng cảm xúc là một giọng bình thường (`"voice": "Hoa · vui"`); app ngoài tự tách đoạn
+theo cảm xúc (có sẵn hàm `parse_emotion_script` trong `apps/emotion_script.py`).
 
 ---
 

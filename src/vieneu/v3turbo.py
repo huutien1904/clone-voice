@@ -13,6 +13,8 @@ natural style. The argument is still accepted everywhere for backward compatibil
 but it is ignored.
 """
 import functools
+import threading
+import time
 import logging
 import os
 from pathlib import Path
@@ -90,7 +92,34 @@ def load_audio_mono(path: Union[str, Path], sr: int = 48000) -> Tuple[np.ndarray
 
 
 # Vùng miền dùng để chỉnh giọng: tên tham số → giá trị ``region`` trong voices_v3_turbo.json.
+def normalize_reference_loudness(wav: np.ndarray, sr: int, target_db: float = -20.0,
+                                 peak_db: float = -1.0, max_gain_db: float = 30.0) -> np.ndarray:
+    """Đưa giọng mẫu về âm lượng chuẩn: RMS các khung có tiếng ≈ ``target_db`` dBFS, đỉnh ≤ ``peak_db``.
+
+    Mẫu thu nhỏ tiếng (vd video điện thoại để xa, -40 dB) làm giọng clone bị cao và mỏng hơn giọng
+    thật (đo: 135 Hz so với 108 Hz); chuẩn hoá đưa về ~112 Hz. Không khuếch đại quá ``max_gain_db``
+    để khỏi đẩy tạp âm lên quá mức; đoạn im lặng giữ nguyên."""
+    x = np.asarray(wav, dtype=np.float32)
+    peak = float(np.abs(x).max()) if x.size else 0.0
+    if peak < 1e-6:
+        return x
+    hop = max(1, int(0.02 * sr))
+    n = len(x) // hop
+    if n < 2:
+        rms = float(np.sqrt(np.mean(x ** 2)))
+    else:
+        fr = np.sqrt(np.mean(x[: n * hop].reshape(n, hop) ** 2, axis=1))
+        loud = fr[fr >= np.median(fr)]
+        rms = float(np.sqrt(np.mean(loud ** 2)))
+    if rms < 1e-9:
+        return x
+    gain = min(10 ** (target_db / 20) / rms, 10 ** (peak_db / 20) / peak, 10 ** (max_gain_db / 20))
+    return (x * gain).astype(np.float32)
+
+
 ACCENTS = {"bac": "Bắc", "nam": "Nam"}
+# Một khoá cho mọi lần đọc lại/ghi file giọng người dùng trong tiến trình (API chạy nhiều luồng).
+_USER_VOICES_LOCK = threading.RLock()
 
 
 @functools.lru_cache(maxsize=8)
@@ -149,7 +178,11 @@ class V3TurboVieNeuTTS(BaseVieneuTTS):
         if not src.exists():
             return str(src)
 
-        wav, sr = sf.read(str(src), dtype="float32", always_2d=False)
+        try:
+            wav, sr = sf.read(str(src), dtype="float32", always_2d=False)
+        except Exception:
+            # m4a/aac/mp4... (vd file ghi âm iPhone): soundfile không đọc được → giải mã qua ffmpeg.
+            wav, sr = load_audio_mono(src)
         if getattr(wav, "ndim", 1) > 1:
             wav = wav.mean(axis=1)
         wav = np.asarray(wav, dtype=np.float32)
@@ -186,7 +219,7 @@ class V3TurboVieNeuTTS(BaseVieneuTTS):
             os.close(fd)
             out_path = Path(out_path)
 
-        sf.write(str(out_path), wav_trimmed, sr)
+        sf.write(str(out_path), normalize_reference_loudness(wav_trimmed, sr), sr)
         return str(out_path)
 
     def __init__(
@@ -285,22 +318,49 @@ class V3TurboVieNeuTTS(BaseVieneuTTS):
         cho ghi đè giọng gốc) và được đánh dấu để ``save_user_voices`` chỉ lưu chúng.
         Trả về số giọng đã nạp; file thiếu/hỏng → 0 và chỉ cảnh báo, không ném lỗi.
         """
+        entries, default_voice = self._parse_voices_file(path, user=user)
+        for name, voice in entries.items():
+            self._preset_voices[name] = voice
+            if user:
+                self._user_voice_names.add(name)
+            else:
+                self._builtin_voice_names.add(name)
+        if user:
+            # Nhớ giọng nào đang nằm trong file: mất khỏi file sau này = bị xoá/đổi tên ở nơi khác.
+            self._persisted_user_names = set(getattr(self, "_persisted_user_names", set())) | set(entries)
+        if not user and default_voice:
+            self._default_voice = default_voice
+        return len(entries)
+
+    def _parse_voices_file(self, path: Path, *, user: bool, skip=(),
+                           strict: bool = False) -> Tuple[dict, Optional[str]]:
+        """Đọc file giọng → ``({tên: giọng}, default_voice)`` mà không sửa trạng thái của đối tượng.
+
+        ``skip``: các tên bỏ qua (vd giọng đã đổi trong phiên này khi nạp lại). ``strict=True``: file
+        hỏng/sai schema thì ném ``ValueError`` (để người gọi giữ nguyên giọng đang có) thay vì coi là
+        file trống. Đọc được cả file UTF-8 có BOM (Notepad, PowerShell 5.1)."""
         import json
         if not path.exists():
-            return 0
+            return {}, None
         try:
-            data = json.loads(path.read_text(encoding="utf-8"))
+            data = json.loads(path.read_text(encoding="utf-8-sig"))
         except Exception as e:  # noqa: BLE001
+            if strict:
+                raise ValueError(f"File giọng {path} hỏng: {e}") from e
             logger.warning(f"⚠️ Không đọc được file giọng {path}: {e}")
-            return 0
+            return {}, None
         presets = data.get("presets") if isinstance(data, dict) else None
         if presets is None:
             presets = {}
         if not isinstance(presets, dict):
+            if strict:
+                raise ValueError(f"File giọng {path} sai schema (cần {{\"presets\": {{...}}}})")
             logger.warning(f"⚠️ File giọng {path} sai schema (cần {{\"presets\": {{tên: {{...}}}}}}) — bỏ qua.")
-            return 0
-        n = 0
+            return {}, None
+        entries = {}
         for name, v in presets.items():
+            if name in skip:
+                continue
             if user and name in self._builtin_voice_names:
                 logger.warning(f"⚠️ Giọng người dùng '{name}' trùng tên giọng có sẵn — bỏ qua.")
                 continue
@@ -316,25 +376,66 @@ class V3TurboVieNeuTTS(BaseVieneuTTS):
             except (TypeError, ValueError, OverflowError) as e:
                 logger.warning(f"⚠️ Giọng '{name}' trong {path} có speaker_emb/codes không hợp lệ ({e}) — bỏ qua.")
                 continue
-            self._preset_voices[name] = {
+            entries[name] = {
                 "description": v.get("description", "") or "",
                 "gender": v.get("gender", "") or "",
                 "style": v.get("style", self.default_style),
                 "speaker_emb": emb,
                 "codes": codes,
             }
-            if user:
-                self._user_voice_names.add(name)
-            else:
-                self._builtin_voice_names.add(name)
-            n += 1
-        if not user and isinstance(data, dict) and data.get("default_voice"):
-            self._default_voice = data.get("default_voice")
-        return n
+        default_voice = data.get("default_voice") if isinstance(data, dict) else None
+        return entries, default_voice
+
+    def _user_file_stamp(self):
+        try:
+            st = os.stat(self.user_voices_path)
+            # st_ino đổi mỗi lần os.replace: bắt được cả hai lần ghi cùng cỡ trong cùng một tích tắc đồng hồ.
+            return (st.st_mtime_ns, st.st_size, st.st_ino)
+        except OSError:
+            return None
+
+    def reload_user_voices(self, force: bool = False) -> bool:
+        """Nạp lại giọng người dùng nếu file đã đổi (giọng vừa lưu từ web, CLI hay tiến trình khác)
+        → dùng được ngay, không cần khởi động lại. Trả về True nếu có nạp lại.
+
+        Giọng đã thêm/sửa/xoá trong chính phiên này được giữ nguyên như trong bộ nhớ. Danh sách giọng
+        được thay bằng bản mới hoàn chỉnh (không sửa tại chỗ) để yêu cầu khác đang đọc không bị lỗi."""
+        with _USER_VOICES_LOCK:
+            return self._reload_user_voices_locked(force)
+
+    def _reload_user_voices_locked(self, force: bool) -> bool:
+        stamp = self._user_file_stamp()
+        if not force and stamp == getattr(self, "_user_voices_stamp", None):
+            return False
+        protected = set(self._changed_user_voices) | set(self._removed_user_voices)
+        try:
+            on_disk, _ = self._parse_voices_file(self.user_voices_path, user=True, strict=True)
+        except ValueError as e:
+            # File đang hỏng (vd sửa tay lỗi cú pháp): giữ nguyên giọng trong bộ nhớ, không coi là trống.
+            logger.warning(f"⚠️ {e} — giữ nguyên danh sách giọng hiện có.")
+            self._user_voices_stamp = stamp
+            return False
+        entries = {n: v for n, v in on_disk.items() if n not in protected}
+        persisted = set(getattr(self, "_persisted_user_names", set()))
+        # Giữ trong bộ nhớ: giọng đổi trong phiên này, và giọng chưa từng lưu (chỉ có trong bộ nhớ).
+        keep = {n for n in self._user_voice_names
+                if n in self._changed_user_voices or (n not in persisted and n not in on_disk)}
+        presets = {n: v for n, v in self._preset_voices.items()
+                   if n not in self._user_voice_names or n in keep}
+        presets.update(entries)
+        users = keep | set(entries)
+        self._preset_voices, self._user_voice_names = presets, users
+        self._persisted_user_names = set(on_disk)
+        if self._default_voice not in self._preset_voices:
+            self._default_voice = next(iter(self._preset_voices), None)
+        self._user_voices_stamp = stamp
+        return True
 
     def _load_v3_voices(self) -> None:
         """Nạp giọng có sẵn (``assets/voices_v3_turbo.json``) rồi giọng người dùng (``user_voices_path``)."""
         n_builtin = self._load_voices_file(self.builtin_voices_path(), user=False)
+        # Lấy dấu thời gian TRƯỚC khi đọc: file đổi ngay trong lúc đọc thì lần reload sau vẫn bắt được.
+        self._user_voices_stamp = self._user_file_stamp()
         n_user = self._load_voices_file(self.user_voices_path, user=True)
         if self._default_voice not in self._preset_voices:
             self._default_voice = next(iter(self._preset_voices), None)
@@ -408,7 +509,8 @@ class V3TurboVieNeuTTS(BaseVieneuTTS):
 
     def add_voice(self, name: str, ref_audio: Union[str, Path], *, denoise: bool = True,
                   use_ref_codes: bool = True, description: str = "", gender: str = "",
-                  style: Any = None, save: bool = False) -> str:
+                  style: Any = None, save: bool = False,
+                  speaker_emb: Optional[np.ndarray] = None) -> str:
         """Register a custom voice under ``name`` for use as ``infer(..., voice=name)``.
 
         ``ref_audio`` is enrolled once (denoised + trimmed, then speaker embedding +
@@ -420,6 +522,10 @@ class V3TurboVieNeuTTS(BaseVieneuTTS):
         ``name`` không được trùng giọng có sẵn (không cho ghi đè giọng gốc); trùng
         giọng người dùng cũ thì thay thế.
 
+        ``speaker_emb``: dùng dấu vân giọng tính sẵn thay cho dấu vân của ``ref_audio`` (vd trung
+        bình trên cả file dài từ :meth:`reference_profile`, đã đẩy giọng miền); ``ref_audio`` khi đó
+        chỉ dùng để lấy mã giọng mẫu.
+
         ``style`` is deprecated: it is stored as metadata only and never changes how
         the voice is synthesized (the style is implied by the reference itself).
         """
@@ -428,10 +534,13 @@ class V3TurboVieNeuTTS(BaseVieneuTTS):
             raise ValueError("Tên giọng không được để trống.")
         if name in self._builtin_voice_names or (name in self._preset_voices and name not in self._user_voice_names):
             raise ValueError(f"'{name}' là giọng có sẵn, không thể ghi đè. Hãy chọn tên khác.")
+        override_emb = speaker_emb
         clean_ref = self._preclean_reference_audio(ref_audio)
         try:
             speaker_emb, ref_codes = self.engine.prepare_reference(
                 str(clean_ref), denoise=denoise, use_ref_codes=use_ref_codes)
+            if override_emb is not None:
+                speaker_emb = override_emb
         finally:
             if clean_ref and Path(clean_ref).resolve() != Path(ref_audio).resolve():
                 try:
@@ -486,13 +595,16 @@ class V3TurboVieNeuTTS(BaseVieneuTTS):
 
     # ── Chỉnh giọng người dùng: embedding trung bình + vùng miền ────────────────
     def speaker_emb_from_audio(self, audio: Union[str, Path, List[Union[str, Path]]], *,
-                               window: float = 6.0, step: float = 1.0) -> np.ndarray:
+                               window: float = 6.0, step: float = 1.0, robust: bool = False) -> np.ndarray:
         """Speaker embedding trung bình trên một hoặc nhiều file audio/video dài của cùng người nói.
 
         Mỗi file được cắt thành đoạn ``window`` giây (bước ``step``), trích embedding từng
         đoạn rồi lấy trung bình hướng; mỗi file nặng như nhau dù dài ngắn khác nhau. Kết
         quả cùng thang độ lớn với embedding thường và ổn định hơn embedding từ một đoạn
         mẫu 3-8 giây. Video/m4a cần ffmpeg (xem :func:`load_audio_mono`).
+
+        ``robust=True``: mỗi file bỏ dần 30% đoạn lệch xa giọng chính nhất (lặp 3 lần) trước
+        khi lấy trung bình — hợp với video/stream có nhạc, tiếng game hay người khác chen vào.
         """
         paths = [audio] if isinstance(audio, (str, Path)) else list(audio)
         if not paths:
@@ -505,7 +617,7 @@ class V3TurboVieNeuTTS(BaseVieneuTTS):
             win = min(int(window * sr), len(wav))
             hop = max(1, int(step * sr))
             peak = float(np.abs(wav).max())
-            units = []
+            units, file_norms = [], []
             for s in range(0, len(wav) - win + 1, hop):
                 seg = wav[s:s + win]
                 if peak == 0.0 or float(np.sqrt(np.mean(seg ** 2))) < 1e-3 * peak:   # bỏ đoạn im lặng
@@ -513,14 +625,96 @@ class V3TurboVieNeuTTS(BaseVieneuTTS):
                 e = np.asarray(self.engine.extract_speaker_emb(seg, sr), dtype=np.float32).reshape(-1)
                 n = float(np.linalg.norm(e))
                 if n > 0:
-                    norms.append(n)
+                    file_norms.append(n)
                     units.append(e / n)
             if not units:
                 raise ValueError(f"Không có đoạn có tiếng nói nào trong {p}.")
-            c = np.mean(units, 0)
-            centroids.append(c / np.linalg.norm(c))
+            U = np.stack(units)
+            keep = np.ones(len(U), dtype=bool)
+            c = U.mean(0)
+            c /= np.linalg.norm(c)
+            if robust and len(U) >= 5:
+                for _ in range(3):
+                    sim = U @ c
+                    keep = sim >= np.percentile(sim, 30)
+                    c = U[keep].mean(0)
+                    c /= np.linalg.norm(c)
+            centroids.append(c)
+            norms.extend(np.asarray(file_norms)[keep].tolist())
         avg = np.mean(centroids, 0)
         return (avg / np.linalg.norm(avg) * float(np.mean(norms))).astype(np.float32)
+
+    def reference_profile(self, audio: Union[str, Path], *, window: float = 6.0, step: float = 1.0,
+                          clip: float = 8.0, min_first_sim: float = 0.80,
+                          min_first_speech: float = 0.5,
+                          max_seconds: float = 120.0) -> Tuple[np.ndarray, float, float]:
+        """Phân tích một file giọng mẫu dài trong một lượt → ``(speaker_emb, bắt_đầu, kết_thúc)``.
+
+        - ``speaker_emb``: trung bình các đoạn ``window`` giây, bỏ dần 30% đoạn lệch giọng chính
+          nhất (nhạc, tiếng game, người khác chen vào) — như ``speaker_emb_from_audio(robust=True)``.
+        - ``bắt_đầu``/``kết_thúc`` (giây): đoạn ``clip`` giây để lấy mã giọng mẫu. Mặc định là đoạn mở
+          đầu (chỗ có tiếng đầu tiên); chỉ đổi sang đoạn điểm cao nhất (giống giọng chính + nhiều tiếng
+          nói) khi đoạn mở đầu rõ ràng hỏng: giống giọng chính dưới ``min_first_sim`` (nhạc, người
+          khác) hoặc có tiếng nói dưới ``min_first_speech``. Đo thực tế: đoạn "giống giọng chính
+          nhất" chưa chắc đọc ra giống hơn đoạn mở đầu, nên chỉ tự cắt khi đoạn mở đầu thật sự tệ.
+        """
+        wav, sr = load_audio_mono(audio)
+        if wav.size == 0:
+            raise ValueError(f"File rỗng: {audio}")
+        if max_seconds and len(wav) > int(max_seconds * sr):
+            wav = wav[: int(max_seconds * sr)]       # chỉ phân tích phần đầu: file dài cả giờ không làm đầy RAM
+        total = len(wav) / sr
+        win = min(int(window * sr), len(wav))
+        hop = max(1, int(step * sr))
+        peak = float(np.abs(wav).max())
+        fl = max(1, int(0.05 * sr))
+
+        def frame_db(x):
+            n = len(x) // fl
+            if n == 0:
+                return np.array([20 * np.log10(np.sqrt(np.mean(x ** 2)) + 1e-9)])
+            return 20 * np.log10(np.sqrt(np.mean(x[: n * fl].reshape(n, fl) ** 2, axis=1)) + 1e-9)
+
+        thr = float(np.percentile(frame_db(wav), 95)) - 25.0   # khung "có tiếng nói"
+        starts, units, norms, covs = [], [], [], []
+        for s in range(0, len(wav) - win + 1, hop):
+            seg = wav[s:s + win]
+            if peak == 0.0 or float(np.sqrt(np.mean(seg ** 2))) < 1e-3 * peak:
+                continue
+            e = np.asarray(self.engine.extract_speaker_emb(seg, sr), dtype=np.float32).reshape(-1)
+            n = float(np.linalg.norm(e))
+            if n > 0:
+                starts.append(s)
+                units.append(e / n)
+                norms.append(n)
+                covs.append(float((frame_db(seg) > thr).mean()))
+        if not units:
+            raise ValueError(f"Không có đoạn có tiếng nói nào trong {audio}.")
+        U, norms, covs, starts = np.stack(units), np.asarray(norms), np.asarray(covs), np.asarray(starts)
+        keep = np.ones(len(U), dtype=bool)
+        c = U.mean(0)
+        c /= np.linalg.norm(c)
+        if len(U) >= 5:
+            for _ in range(3):
+                sim = U @ c
+                keep = sim >= np.percentile(sim, 30)
+                c = U[keep].mean(0)
+                c /= np.linalg.norm(c)
+        emb = (c * float(norms[keep].mean())).astype(np.float32)
+
+        # Điểm đoạn mẫu: trung bình điểm các cửa sổ nằm trọn trong [t, t + clip].
+        sims = U @ c
+        score = 2.0 * sims + covs
+        span = max(0, int(round((clip - window) * sr)))
+        inside = [(starts >= s) & (starts <= s + span) for s in starts]
+        clip_scores = [float(score[m].mean()) for m in inside]
+        first_ok = float(sims[inside[0]].mean()) >= min_first_sim and float(covs[inside[0]].mean()) >= min_first_speech
+        best = 0 if first_ok else int(np.argmax(clip_scores))   # đoạn mở đầu ổn → giữ nguyên
+        start = float(starts[best]) / sr
+        end = min(start + clip, total)
+        if end - start < clip:                      # sát cuối file: lùi điểm bắt đầu cho đủ dài
+            start = max(0.0, end - clip)
+        return emb, round(start, 2), round(end, 2)
 
     @classmethod
     def accent_direction(cls, accent: str = "bac") -> np.ndarray:
@@ -600,24 +794,57 @@ class V3TurboVieNeuTTS(BaseVieneuTTS):
         đè các giọng nó đã ``add_voice``/``tune_voice`` (hoặc giọng đã mất khỏi đĩa), và
         chỉ giọng phiên này đã ``remove_voice`` mới bị bỏ. Trả về đường dẫn file.
         """
+        with _USER_VOICES_LOCK:
+            return self._save_user_voices_locked(path)
+
+    def _save_user_voices_locked(self, path) -> str:
         import json
+        import shutil
         import tempfile
         path = Path(path).expanduser() if path else self.user_voices_path
         presets: dict = {}
+        disk_ok = True   # False = file hỏng → ghi lại toàn bộ giọng trong bộ nhớ (không coi giọng nào "đã bị xoá")
         if path.exists():
             try:
-                on_disk = json.loads(path.read_text(encoding="utf-8"))
-                on_disk = on_disk.get("presets") if isinstance(on_disk, dict) else None
-                if isinstance(on_disk, dict):
-                    presets = {n: v for n, v in on_disk.items()
-                               if isinstance(v, dict) and n not in self._builtin_voice_names}
+                data_on_disk = json.loads(path.read_text(encoding="utf-8-sig"))
+                if not isinstance(data_on_disk, dict):
+                    raise ValueError("sai schema (cần {\"presets\": {...}})")
+                on_disk = data_on_disk.get("presets")
+                if on_disk is None:
+                    on_disk = {}                      # file hợp lệ nhưng chưa có giọng nào
+                if not isinstance(on_disk, dict):
+                    raise ValueError("sai schema (cần {\"presets\": {...}})")
+                presets = {n: v for n, v in on_disk.items()
+                           if isinstance(v, dict) and n not in self._builtin_voice_names}
             except Exception as e:  # noqa: BLE001
-                logger.warning(f"⚠️ Không đọc được {path} để gộp, sẽ ghi lại từ bộ nhớ: {e}")
+                disk_ok = False
+                bak = path.with_name(f"{path.stem}.hong-{time.strftime('%Y%m%d-%H%M%S')}{path.suffix}")
+                try:
+                    shutil.copy2(path, bak)   # giữ lại bản hỏng để còn cứu dữ liệu bằng tay
+                except Exception:  # noqa: BLE001
+                    bak = None
+                logger.warning(f"⚠️ Không đọc được {path} để gộp ({e}); sẽ ghi lại từ bộ nhớ"
+                               + (f", bản hỏng lưu ở {bak}" if bak else ""))
+        try:
+            is_main = path.resolve() == Path(self.user_voices_path).expanduser().resolve()
+        except Exception:  # noqa: BLE001
+            is_main = False
         for n in self._removed_user_voices:
             presets.pop(n, None)
+        # Giọng từng nằm trong file chính mà nay biến mất = bị xoá/đổi tên ở tiến trình khác → không ghi lại
+        # ("hồi sinh"); giọng chưa từng lưu (chỉ có trong bộ nhớ) thì ghi vào như trước.
+        old_persisted = set(getattr(self, "_persisted_user_names", set())) if (is_main and disk_ok) else set()
+        gone = set()
         for n in list(self._user_voice_names):
-            if n in self._preset_voices and (n in self._changed_user_voices or n not in presets):
+            if n not in self._preset_voices:
+                continue
+            if n in self._changed_user_voices:
                 presets[n] = self._voice_to_json(self._preset_voices[n])
+            elif n not in presets:
+                if n in old_persisted:
+                    gone.add(n)
+                else:
+                    presets[n] = self._voice_to_json(self._preset_voices[n])
         data = {"meta": {"note": "VieNeu user voices (cloned): speaker embedding + reference codes",
                          "count": len(presets)},
                 "presets": presets}
@@ -633,6 +860,18 @@ class V3TurboVieNeuTTS(BaseVieneuTTS):
                     os.remove(tmp)
                 except Exception:
                     pass
+        if is_main:
+            # File chính đã khớp bộ nhớ với các giọng vừa ghi/xoá → bỏ đánh dấu "đổi trong phiên" để
+            # reload_user_voices() sau tôn trọng thay đổi từ tiến trình khác; bỏ khỏi bộ nhớ các giọng
+            # đã bị xoá ở nơi khác. Xuất ra file khác (bản sao) thì giữ nguyên đánh dấu.
+            self._persisted_user_names = set(presets)
+            self._changed_user_voices.clear()
+            self._removed_user_voices.clear()
+            if gone:
+                self._preset_voices = {k: v for k, v in self._preset_voices.items() if k not in gone}
+                self._user_voice_names = self._user_voice_names - gone
+                if self._default_voice in gone:
+                    self._default_voice = next(iter(self._preset_voices), None)
         logger.info(f"💾 Saved {len(presets)} user voices → {path}")
         return str(path)
 

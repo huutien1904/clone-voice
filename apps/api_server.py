@@ -230,7 +230,19 @@ class OpenAISpeechRequest(BaseModel):
 
 
 # ── Helpers ─────────────────────────────────────────────────────────────────────
+def _sync_voices(tts) -> None:
+    """Nạp lại giọng người dùng nếu file giọng vừa đổi (vd lưu từ web UI hay voice_tool) —
+    giọng mới dùng được ngay, không cần khởi động lại server. Chỉ tốn một lần os.stat."""
+    reload = getattr(tts, "reload_user_voices", None)
+    if reload is not None:
+        try:
+            reload()
+        except Exception:  # noqa: BLE001
+            logger.exception("reload_user_voices failed")
+
+
 def _resolve_voice(request: Request, tts, voice: Optional[str]) -> str:
+    _sync_voices(tts)
     ids = [v["id"] for v in tts.list_voices()]
     name = (voice or "").strip() or request.app.state.default_voice or (getattr(tts, "_default_voice", None) or "")
     if name not in ids:
@@ -400,6 +412,7 @@ async def health(request: Request):
 
 @app.get("/voices", dependencies=[Depends(require_api_key)])
 async def list_voices(request: Request, tts=Depends(get_tts)):
+    _sync_voices(tts)
     default = request.app.state.default_voice or getattr(tts, "_default_voice", None)
     return {"default": default, "voices": tts.list_voices()}
 
@@ -442,6 +455,7 @@ async def add_voice(
             raise HTTPException(status_code=422, detail=f"Audio mẫu quá dài ({info.duration:.0f}s); hãy cắt đoạn 3-8 giây.")
 
         async with _EngineSlot(request):
+            _sync_voices(tts)  # tránh ghi đè/hồi sinh giọng vừa bị đổi ở tiến trình khác
             try:
                 await run_in_threadpool(tts.add_voice, name, tmp_path, denoise=denoise,
                                         description=description, gender=gender, save=True)
@@ -461,6 +475,7 @@ async def add_voice(
 
 @app.delete("/voices/{name}", dependencies=[Depends(require_api_key)])
 async def delete_voice(name: str, request: Request, tts=Depends(get_tts)):
+    _sync_voices(tts)
     ids = {v["id"] for v in tts.list_voices()}
     if name not in ids:
         raise HTTPException(status_code=404, detail=f"Giọng '{name}' không tồn tại.")

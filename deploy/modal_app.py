@@ -2,7 +2,7 @@
 Deploy VieNeu-TTS API lên Modal.com (serverless, CPU, trả tiền theo giây chạy).
 =================================================================================
 Gói ``apps/api_server.py`` + model v3 Turbo (ONNX int8, tải sẵn vào image) + giọng
-người dùng (clone_A, ...) thành một web endpoint HTTPS. Container tự tắt khi rảnh
+người dùng (clone_bản tin vip, ...) thành một web endpoint HTTPS. Container tự tắt khi rảnh
 (``scaledown_window``) nên chi phí chỉ phát sinh khi có request.
 
 Cài & đăng nhập (một lần, dùng tài khoản GitHub):
@@ -16,7 +16,7 @@ Deploy (chạy từ thư mục gốc repo, nơi có src/ và apps/):
 
 Thử nhanh:
     curl -X POST https://<url>/tts -H "X-API-Key: chuoi-bi-mat" -H "Content-Type: application/json" \
-         -d '{"text": "Xin chào", "voice": "clone_A"}' -o out.wav
+         -d '{"text": "Xin chào", "voice": "clone_bản tin vip"}' -o out.wav
 
 Tuỳ chỉnh bằng biến môi trường lúc deploy:
     MODAL_CPU=2 MODAL_MEMORY_MB=4096   tài nguyên container. Modal tính `cpu` theo NHÂN VẬT LÝ (1 = 2 vCPU),

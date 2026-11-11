@@ -2,7 +2,7 @@
 
 File deploy: [`deploy/modal_app.py`](../deploy/modal_app.py). Nó gói API server
 (`apps/api_server.py`), model v3 Turbo ONNX int8 (tải sẵn vào image lúc build), ffmpeg và
-giọng người dùng (clone_A, ...) thành một endpoint HTTPS. Container chỉ chạy khi có request và
+giọng người dùng (clone_bản tin vip, ...) thành một endpoint HTTPS. Container chỉ chạy khi có request và
 tự tắt sau `scaledown_window` giây rảnh, nên chi phí tính theo giây thực chạy.
 
 Số liệu trong tài liệu này lấy từ trang giá và tài liệu chính thức của Modal ngày 27/09/2026.
@@ -49,7 +49,7 @@ chỉ build lại phần thay đổi. Kết thúc, terminal in ra URL:
 https://<workspace>--vieneu-tts.modal.run
 ```
 
-Giọng người dùng trên máy deploy (`~/.cache/vieneu/user_voices.json`, đang có `clone_A`) được nhúng
+Giọng người dùng trên máy deploy (`~/.cache/vieneu/user_voices.json`, đang có `clone_bản tin vip`) được nhúng
 vào image và chép vào Volume `vieneu-voices` ở lần chạy đầu. Giọng thêm sau đó qua `POST /voices`
 cũng ghi vào Volume (Modal tự commit định kỳ và khi container tắt; file deploy còn commit ngay sau
 mỗi lần thêm/xoá giọng) nên không mất khi container tắt.
@@ -60,7 +60,7 @@ Thử:
 curl https://<workspace>--vieneu-tts.modal.run/health
 curl -X POST https://<workspace>--vieneu-tts.modal.run/tts \
   -H "X-API-Key: chuoi-bi-mat-cua-ban" -H "Content-Type: application/json" \
-  -d '{"text": "Xin chào, đây là giọng clone A chạy trên Modal.", "voice": "clone_A"}' -o out.wav
+  -d '{"text": "Xin chào, đây là giọng clone A chạy trên Modal.", "voice": "clone_bản tin vip"}' -o out.wav
 ```
 
 Trong app của bạn chỉ cần đổi `http://<HOST>:8000` trong [PROMPT_TICH_HOP_APP.md](PROMPT_TICH_HOP_APP.md)
