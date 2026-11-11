@@ -92,10 +92,10 @@ modal serve deploy/modal_app.py        # chạy thử tạm thời (URL có hậ
 Muốn quản lý API key bằng Modal Secrets thay vì biến môi trường máy deploy:
 
 ```bash
-modal secret create vieneu-api VIENEU_API_KEY=chuoi-bi-mat
+modal secret create clone-voice-tts-api VIENEU_API_KEY=chuoi-bi-mat
 ```
 
-rồi trong `deploy/modal_app.py` thay `modal.Secret.from_dict(...)` bằng `modal.Secret.from_name("vieneu-api")`.
+rồi trong `deploy/modal_app.py` thay `modal.Secret.from_dict(...)` bằng `modal.Secret.from_name("clone-voice-tts-api")`.
 
 ## 5. Chi phí
 

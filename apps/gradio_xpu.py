@@ -603,10 +603,10 @@ with gr.Blocks(theme=theme, css=css, title="Clone-voice-TTS (XPU)", head=head_ht
     </h1>
     <div class="model-card-content">
         <div class="model-card-item">
-            <strong>Models:</strong>
-            <a href="https://huggingface.co/pnnbao-ump/VieNeu-TTS" target="_blank" class="model-card-link">VieNeu-TTS</a>
+            <strong>Model gốc:</strong>
+            <a href="https://huggingface.co/pnnbao-ump/VieNeu-TTS" target="_blank" class="model-card-link">v1 (Hugging Face)</a>
             <span>•</span>
-            <a href="https://huggingface.co/pnnbao-ump/VieNeu-TTS-0.3B" target="_blank" class="model-card-link">VieNeu-TTS-0.3B</a>
+            <a href="https://huggingface.co/pnnbao-ump/VieNeu-TTS-0.3B" target="_blank" class="model-card-link">0.3B (Hugging Face)</a>
         </div>
         <div class="model-card-item">
             <strong>Repository:</strong>
@@ -621,8 +621,8 @@ with gr.Blocks(theme=theme, css=css, title="Clone-voice-TTS (XPU)", head=head_ht
             <a href="https://github.com/pnnbao97/VieNeu-TTS" target="_blank" class="model-card-link">VieNeu-TTS của Phạm Nguyễn Ngọc Bảo</a>
         </div>
         <div class="model-card-item">
-            <strong>Discord:</strong>
-            <a href="https://discord.gg/yJt8kzjzWZ" target="_blank" class="model-card-link">Tham gia cộng đồng</a>
+            <strong>Báo lỗi:</strong>
+            <a href="https://github.com/huutien1904/clone-voice/issues" target="_blank" class="model-card-link">GitHub Issues</a>
         </div>
     </div>
 </div>
@@ -663,7 +663,7 @@ with gr.Blocks(theme=theme, css=css, title="Clone-voice-TTS (XPU)", head=head_ht
                 )
             
             gr.Markdown("""
-            💡 **Sử dụng Custom Model:** Chọn "Custom Model" để tải LoRA adapter hoặc bất kỳ model nào được finetune từ **Clone-voice-TTS** hoặc **Clone-voice-TTS-0.3B**.
+            💡 **Sử dụng Custom Model:** Chọn "Custom Model" để tải LoRA adapter hoặc bất kỳ model nào được finetune từ model gốc `pnnbao-ump/VieNeu-TTS` hoặc `pnnbao-ump/VieNeu-TTS-0.3B` của tác giả Phạm Nguyễn Ngọc Bảo.
             """)
             
             gr.HTML("""

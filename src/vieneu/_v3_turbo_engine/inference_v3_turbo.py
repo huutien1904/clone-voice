@@ -1,5 +1,5 @@
 """
-Clone-voice-TTS v3 Turbo — inference engine (PyTorch).
+VieNeu-TTS v3 Turbo — inference engine (PyTorch).
 =================================================
 Synthesizes 48 kHz Vietnamese / English speech with instant voice cloning from a
 short reference clip. It loads a checkpoint plus the MOSS audio codec (and, for

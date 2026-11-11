@@ -15,7 +15,7 @@ Endpoints
     POST   /tts                    JSON → audio (wav/pcm/flac; mp3/opus/aac nếu có ffmpeg)
     POST   /tts/stream             JSON → WAV stream theo chunk (nghe ngay sau ~300 ms)
     POST   /v1/audio/speech        tương thích OpenAI Audio API (``input``, ``voice``, ``response_format``)
-    GET    /v1/models              tương thích OpenAI (một model: ``vieneu-v3-turbo``)
+    GET    /v1/models              tương thích OpenAI (một model: ``clone-voice-tts-v3-turbo``)
 
 Biến môi trường
     VIENEU_API_HOST / VIENEU_API_PORT   mặc định 127.0.0.1 / 8000
@@ -77,7 +77,7 @@ def _env_int(name: str, default: int) -> int:
 
 
 SAMPLE_RATE = 48_000
-MODEL_ID = "vieneu-v3-turbo"
+MODEL_ID = "clone-voice-tts-v3-turbo"
 MAX_TEXT_CHARS = max(1, _env_int("VIENEU_API_MAX_CHARS", 3000))
 MAX_UPLOAD_BYTES = 25 * 1024 * 1024
 MAX_REF_SECONDS = 60.0
@@ -542,7 +542,7 @@ async def openai_speech(req: OpenAISpeechRequest, request: Request, tts=Depends(
 
 @app.get("/v1/models", dependencies=[Depends(require_api_key)])
 async def openai_models():
-    return {"object": "list", "data": [{"id": MODEL_ID, "object": "model", "owned_by": "vieneu"}]}
+    return {"object": "list", "data": [{"id": MODEL_ID, "object": "model", "owned_by": "clone-voice-tts"}]}
 
 
 # ── CLI ─────────────────────────────────────────────────────────────────────────

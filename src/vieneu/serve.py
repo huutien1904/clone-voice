@@ -109,7 +109,7 @@ def main() -> None:
     # Check if lmdeploy is installed
     if not check_command("lmdeploy"):
         logger.error("❌ 'lmdeploy' not found!")
-        logger.error("   Please install it using: pip install vieneu[gpu]")
+        logger.error("   Please install it using: pip install lmdeploy")
         sys.exit(1)
         
     run_server(args)

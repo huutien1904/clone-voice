@@ -5,20 +5,14 @@
 > [!TIP]
 > **Không biết code? Làm theo [Hướng dẫn cài và dùng Clone-voice-TTS](HUONG_DAN.md)**: chỉ cần ứng dụng Claude trên máy tính (gói Pro trở lên) và dán một đoạn có sẵn, có ảnh minh hoạ từng bước.
 
-[![Awesome](https://img.shields.io/badge/Awesome-NLP-green?logo=github)](https://github.com/keon/awesome-nlp)
-[![Discord](https://img.shields.io/badge/Discord-Join%20Us-5865F2?logo=discord&logoColor=white)](https://discord.gg/yJt8kzjzWZ)
-
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1b9PO-lcGZX9pEkEwQmu8MfhSnjxKrALW?usp=sharing)
 [![Hugging Face VieNeu-TTS-v2](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-v2-blue)](https://huggingface.co/pnnbao-ump/VieNeu-TTS-v2)
 [![Hugging Face VieNeu-TTS](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-v1-orange)](https://huggingface.co/pnnbao-ump/VieNeu-TTS)
 
-<img width="1087" height="710" alt="image" src="https://github.com/user-attachments/assets/5534b5db-f30b-4d27-8a35-80f1cf6e5d4d" />
-
-**Clone-voice-TTS-v2** là thế hệ tiếp theo của mô hình chuyển đổi văn bản thành giọng nói (TTS) tiếng Việt chạy trên thiết bị, hỗ trợ **10.000+ giờ dữ liệu** huấn luyện song ngữ, **clone giọng nói tức thì**, và chế độ **Podcast/Hội thoại** chuyên dụng.
+**Clone-voice-TTS** dùng mô hình **VieNeu-TTS** (v2, v3 Turbo) do tác giả Phạm Nguyễn Ngọc Bảo thiết kế và huấn luyện trên **10.000+ giờ dữ liệu** song ngữ — TTS tiếng Việt chạy trên thiết bị, **clone giọng nói tức thì** và chế độ **Podcast/Hội thoại** chuyên dụng.
 
 > [!IMPORTANT]
-> **🚀 Clone-voice-TTS-v2 đã ra mắt!**
-> Kiến trúc song ngữ chất lượng cao (high-fidelity) hiện đã sẵn sàng với:
+> **🚀 Clone-voice-TTS-v2 (GPU) dùng mô hình VieNeu-TTS-v2 của tác giả Phạm Nguyễn Ngọc Bảo**
+> Kiến trúc song ngữ chất lượng cao (high-fidelity) của tác giả gốc, với:
 > - **10.000+ Giờ dữ liệu:** Độ tự nhiên vượt trội trong cả tiếng Anh và tiếng Việt.
 > - **Chế độ Podcast & Đối thoại:** Hỗ trợ đa người nói với các sắc thái biểu cảm.
 > - **Zero-shot Cloning:** Clone bất kỳ giọng nói nào chỉ trong 3-5 giây trên tất cả các biến thể v2.
@@ -30,8 +24,6 @@
 - **Clone giọng nói tức thì**: Clone bất kỳ giọng nói nào chỉ với **3-5 giây** âm thanh mẫu.
 - **Hiệu suất cực nhanh**: Được tối ưu hóa cho **GPU (LMDeploy)** và **CPU (GGUF/ONNX)**.
 - **Sẵn sàng cho sản xuất**: Tạo âm thanh chất lượng cao 24 kHz, hoạt động hoàn toàn offline.
-
-[<img width="600" height="595" alt="Clone-voice-TTS Demo" src="https://github.com/user-attachments/assets/021f6671-2d7f-4635-91fb-88b2ab0ddbcd" />](https://github.com/user-attachments/assets/021f6671-2d7f-4635-91fb-88b2ab0ddbcd)
 
 ## 📌 Mục lục
 
@@ -105,7 +97,7 @@ SDK `vieneu` **mặc định dùng Clone-voice-TTS v3 Turbo (48 kHz)**. Bản c�
 **CPU (mặc định)** — không cần torch, chạy v3 Turbo bằng ONNX Runtime. Đa số người dùng chọn cái này:
 
 ```bash
-pip install vieneu
+pip install "git+https://github.com/huutien1904/clone-voice"
 ```
 
 **GPU (CUDA)** — chỉ khi bạn có GPU NVIDIA. Tự cài bản PyTorch CUDA **trước** (không có extra `[gpu]`). Trên CUDA, batch tự bật — cùng API, không đổi code:
@@ -113,7 +105,7 @@ pip install vieneu
 ```bash
 pip install torch==2.8.0 torchaudio==2.8.0 --index-url https://download.pytorch.org/whl/cu128
 pip install "transformers==4.57.6"   # Qwen3 backbone + MOSS codec (bản ổn định nhất cho SDK GPU)
-pip install vieneu
+pip install "git+https://github.com/huutien1904/clone-voice"
 ```
 
 > ℹ️ **Khi nào GPU thật sự đáng dùng?** Lợi thế của GPU đến từ **batch**, nên chỉ
@@ -258,7 +250,7 @@ wav, sr = vieneu.denoise("noisy.wav", out_path="clean.wav")   # 44.1 kHz mono
 
 ## 🐳 3. Server Chất lượng cao (Standard Mode) <a name="docker-remote"></a>
 
-Triển khai Clone-voice-TTS dưới dạng API Server hiệu suất cao (được hỗ trợ bởi LMDeploy) chỉ bằng một câu lệnh duy nhất.
+Triển khai Clone-voice-TTS dưới dạng API Server hiệu suất cao (LMDeploy, cần GPU NVIDIA) bằng Docker.
 
 ### 1. Chạy với Docker (Khuyến nghị)
 
@@ -266,10 +258,11 @@ Triển khai Clone-voice-TTS dưới dạng API Server hiệu suất cao (đư�
 
 **Khởi chạy Server với Đường hầm công khai (Không cần mở cổng modem):**
 ```bash
-docker run --gpus all -p 23333:23333 -v huggingface_cache:/root/.cache/huggingface pnnbao/vieneu-tts:latest --tunnel
+docker build -t clone-voice-tts:serve -f docker/Dockerfile.serve .   # chạy trong thư mục code
+docker run --gpus all -p 23333:23333 -v huggingface_cache:/root/.cache/huggingface clone-voice-tts:serve --tunnel
 ```
 
-*   **Mặc định**: Server sẽ tải model `Clone-voice-TTS-v2` để đạt chất lượng tối đa.
+*   **Mặc định**: Server sẽ tải model `pnnbao-ump/VieNeu-TTS-v2` (Clone-voice-TTS-v2) để đạt chất lượng tối đa.
 *   **Tunneling**: Docker image tích hợp sẵn đường hầm `bore`. Kiểm tra container logs để tìm địa chỉ công khai của bạn (VD: `bore.pub:31631`).
 
 ### 2. Sử dụng SDK (Chế độ Remote)
@@ -278,7 +271,7 @@ Khi server đã chạy, bạn có thể kết nối từ bất kỳ đâu (Colab
 
 **Cài đặt**:
 ```bash
-pip install "vieneu[legacy]"
+pip install "vieneu[legacy] @ git+https://github.com/huutien1904/clone-voice"
 ```
 
 **Sử dụng**:
@@ -335,7 +328,7 @@ Tùy chỉnh server để chạy các phiên bản cụ thể hoặc các model 
 
 **Chạy model 0.3B (Nhanh hơn):**
 ```bash
-docker run --gpus all pnnbao/vieneu-tts:serve --model pnnbao-ump/VieNeu-TTS-0.3B --tunnel
+docker run --gpus all clone-voice-tts:serve --model pnnbao-ump/VieNeu-TTS-0.3B --tunnel
 ```
 
 **Serve model đã Fine-tuned cục bộ:**
@@ -344,13 +337,15 @@ Nếu bạn đã merge LoRA adapter, hãy mount thư mục đầu ra của bạn
 # Linux / macOS
 docker run --gpus all \
   -v $(pwd)/finetune/output:/workspace/models \
-  pnnbao/vieneu-tts:serve \
+  clone-voice-tts:serve \
   --model /workspace/models/merged_model --tunnel
 ```
 
 ---
 
 ## 🔬 4. Tổng quan mô hình <a name="backbones"></a>
+
+Mô hình bên dưới là **VieNeu-TTS v3 Turbo** do tác giả **Phạm Nguyễn Ngọc Bảo** thiết kế, huấn luyện và phát hành ([pnnbao-ump/VieNeu-TTS-v3-Turbo](https://huggingface.co/pnnbao-ump/VieNeu-TTS-v3-Turbo)); "Clone-voice-TTS v3 Turbo" là tên gọi trong sản phẩm này.
 
 | Model | Engine | Thiết bị | Sample Rate | Tính năng |
 |---|---|---|---|---|
@@ -363,7 +358,9 @@ docker run --gpus all \
 
 ## 🚀 5. Lộ trình phát triển <a name="roadmap"></a>
 
-- [x] **Clone-voice-TTS-v2**: Kiến trúc song ngữ chất lượng cao đầy đủ với **Chế độ Podcast** và **Clone giọng nói**.
+Lộ trình của dự án gốc **VieNeu-TTS** (tác giả Phạm Nguyễn Ngọc Bảo), chỉ để tham khảo, không phải cam kết của Clone-voice-TTS:
+
+- [x] **VieNeu-TTS-v2**: Kiến trúc song ngữ chất lượng cao đầy đủ với **Chế độ Podcast** và **Clone giọng nói**.
 - [x] **VieNeu-Codec**: Neural codec tối ưu cho tiếng Việt (ONNX).
 - [x] **Turbo Voice Cloning**: Mang tính năng clone giọng nói tức thì lên engine Turbo siêu nhẹ.
 - [ ] **Mobile SDK**: Hỗ trợ chính thức cho việc triển khai trên Android/iOS.
@@ -382,7 +379,7 @@ docker run --gpus all \
 Bản phát triển này:
 
 ```bibtex
-@misc{vieneutts_clone2026,
+@misc{clonevoicetts2026,
   title        = {Clone-voice-TTS: voice cloning from video, API server and accent tuning},
   author       = {Tran Trong Thanh Tung and Huu Tien},
   year         = {2026},
@@ -423,6 +420,6 @@ Cảm ơn tất cả những người tuyệt vời đã đóng góp cho dự á
 
 ## 🙏 Lời cảm ơn
 
-Dự án này được phát triển từ [VieNeu-TTS](https://github.com/pnnbao97/VieNeu-TTS) của tác giả **Phạm Nguyễn Ngọc Bảo**, người thiết kế và huấn luyện các model VieNeu-TTS. Dự án sử dụng [neucodec](https://huggingface.co/neuphonic/neucodec) để giải mã âm thanh và [sea-g2p](https://github.com/pnnbao97/sea-g2p) để chuẩn hóa văn bản và phiên âm.
+Dự án này được phát triển từ [VieNeu-TTS](https://github.com/pnnbao97/VieNeu-TTS) của tác giả **Phạm Nguyễn Ngọc Bảo**, người thiết kế và huấn luyện các model VieNeu-TTS. Dự án sử dụng [neucodec](https://huggingface.co/neuphonic/neucodec) (v1/v2) và [MOSS-Audio-Tokenizer-Nano](https://huggingface.co/OpenMOSS-Team/MOSS-Audio-Tokenizer-Nano) (v3 Turbo) để giải mã âm thanh và [sea-g2p](https://github.com/pnnbao97/sea-g2p) để chuẩn hóa văn bản và phiên âm.
 
 **Được thực hiện với ❤️ dành cho cộng đồng TTS Việt Nam**

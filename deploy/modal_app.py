@@ -87,7 +87,7 @@ if SEED_VOICES_LOCAL.exists():
 
 volume = modal.Volume.from_name(VOLUME_NAME, create_if_missing=True)
 # API key lấy từ môi trường máy deploy. Muốn quản lý qua Modal Secrets:
-#   modal secret create vieneu-api VIENEU_API_KEY=...   rồi thay bằng modal.Secret.from_name("vieneu-api")
+#   modal secret create clone-voice-tts-api VIENEU_API_KEY=...   rồi thay bằng modal.Secret.from_name("clone-voice-tts-api")
 secret = modal.Secret.from_dict({"VIENEU_API_KEY": os.environ.get("VIENEU_API_KEY", "")})
 
 app = modal.App(APP_NAME)

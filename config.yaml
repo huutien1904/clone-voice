@@ -7,7 +7,7 @@ backbone_configs:
   "Clone-voice-TTS-v3-Turbo (Thử nghiệm)":
     repo: pnnbao-ump/VieNeu-TTS-v3-Turbo
     supports_streaming: false
-    description: "🆕 v3 Turbo (early access) — 48kHz. CPU dùng ONNX; GPU dùng PyTorch. Giọng mặc định qua speaker token; Voice Cloning từ audio mẫu; hỗ trợ tag cảm xúc (thử nghiệm). Bản dùng thử; v3 đầy đủ sẽ ra mắt trong vài tuần tới."
+    description: "🆕 v3 Turbo (early access) — 48kHz. CPU dùng ONNX; GPU dùng PyTorch. Giọng mặc định qua speaker token; Voice Cloning từ audio mẫu; hỗ trợ tag cảm xúc (thử nghiệm)."
   # GPU-only extras.
   "Clone-voice-TTS-v2 (GPU)":
     repo: pnnbao-ump/VieNeu-TTS-v2

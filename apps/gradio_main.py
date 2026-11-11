@@ -518,7 +518,7 @@ def on_clone_file_upload(path):
     if not ffmpeg:
         gr.Warning("Máy chủ chưa cài ffmpeg nên chỉ nhận file wav, mp3, flac hoặc ogg.")
         return gr.update()
-    fd, out = tempfile.mkstemp(prefix="vieneu_clone_", suffix=".wav")
+    fd, out = tempfile.mkstemp(prefix="giong-mau-", suffix=".wav")
     os.close(fd)
     p = subprocess.run([ffmpeg, "-v", "error", "-y", "-i", str(path), "-vn", "-ac", "1", "-ar", "48000",
                         "-t", "120", out], capture_output=True)
@@ -2567,7 +2567,7 @@ with gr.Blocks(theme=theme, css=css, title="Clone-voice-TTS", head=head_html) as
             
             
                 gr.Markdown("""
-                💡 **Sử dụng Custom Model:** Chọn "Custom Model" để tải LoRA adapter hoặc bất kỳ model nào được finetune từ **Clone-voice-TTS** hoặc **Clone-voice-TTS-0.3B**.
+                💡 **Sử dụng Custom Model:** Chọn "Custom Model" để tải LoRA adapter hoặc bất kỳ model nào được finetune từ model gốc `pnnbao-ump/VieNeu-TTS` hoặc `pnnbao-ump/VieNeu-TTS-0.3B` của tác giả Phạm Nguyễn Ngọc Bảo.
                 """)
             
                 gr.HTML("""
@@ -2579,7 +2579,7 @@ with gr.Blocks(theme=theme, css=css, title="Clone-voice-TTS", head=head_html) as
                         <div class="warning-banner-item">
                             <strong>🐆 Hệ máy GPU</strong>
                             <div class="warning-banner-content">
-                                <b>Clone-voice-TTS-v3-Turbo (early access)</b> đã được phát hành để dùng thử trước, đã hỗ trợ các tag cảm xúc `[cười]` `[hắng giọng]` `[thở dài]`, tuy nhiên những tính năng này vẫn đang được thử nghiệm và chưa thực sự ổn định, có thể sẽ xảy ra lỗi không mong muốn, nếu có lỗi các bạn hãy thông báo với chúng tôi tại: https://discord.com/invite/yJt8kzjzWZ. Trong trường hợp bạn cần sự ổn định hãy sử dụng <b>Clone-voice-TTS-v2 (GPU)</b>. 
+                                <b>Clone-voice-TTS-v3-Turbo (early access)</b> (bản dùng thử của mô hình VieNeu-TTS v3 Turbo, tác giả Phạm Nguyễn Ngọc Bảo) đã hỗ trợ các tag cảm xúc `[cười]` `[hắng giọng]` `[thở dài]`, tuy nhiên những tính năng này vẫn đang được thử nghiệm và chưa thực sự ổn định, có thể sẽ xảy ra lỗi không mong muốn, nếu có lỗi các bạn hãy báo cho chúng tôi tại: https://github.com/huutien1904/clone-voice/issues. Trong trường hợp bạn cần sự ổn định hãy sử dụng <b>Clone-voice-TTS-v2 (GPU)</b>. 
                             </div>
                         </div>
                         <div class="warning-banner-item" style="background: #dcfce7; border-color: #86efac;">
@@ -2596,9 +2596,8 @@ with gr.Blocks(theme=theme, css=css, title="Clone-voice-TTS", head=head_html) as
                 """)
 
                 gr.Markdown(
-                    "🆕 **Clone-voice-TTS-v3-Turbo (early access)** đã được phát hành để **dùng thử trước** — "
-                    "48kHz, **hỗ trợ Voice Cloning** (tính năng clone chỉ có từ **v3** trở lên; v1/v2 không hỗ trợ). "
-                    "Bản **v3 đầy đủ** sẽ ra mắt trong **vài tuần tới**.\n\n"
+                    "🆕 Clone-voice-TTS dùng mô hình **VieNeu-TTS v3 Turbo (early access)** của tác giả Phạm Nguyễn Ngọc Bảo — "
+                    "48kHz, **hỗ trợ Voice Cloning** (tính năng clone chỉ có từ **v3** trở lên; v1/v2 không hỗ trợ).\n\n"
                     "🎭 v3 Turbo đã **hỗ trợ các tag cảm xúc** `[cười]` `[hắng giọng]` `[thở dài]` "
                     "(chèn trực tiếp vào văn bản) — nhưng tính năng này **đang thử nghiệm và chưa thực sự ổn định**."
                 )
@@ -2624,7 +2623,7 @@ with gr.Blocks(theme=theme, css=css, title="Clone-voice-TTS", head=head_html) as
                             btn_clear_text = gr.ClearButton([text_input], value="🗑️ Xoá chữ", size="sm",
                                                             scale=0, min_width=110)
                             # Lấy chữ từ PDF: chọn file xong chữ tự điền vào ô ở trên.
-                            # Ẩn hẳn nếu máy chưa cài PyMuPDF (pip install vieneu[pdf]).
+                            # Ẩn hẳn nếu máy chưa cài PyMuPDF (uv sync --frozen --extra pdf).
                             pdf_upload = gr.UploadButton(
                                 "📄 Lấy chữ từ file PDF",
                                 file_types=[".pdf"],

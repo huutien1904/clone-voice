@@ -71,7 +71,7 @@ class FastVieNeuTTS(BaseVieneuTTS):
             from lmdeploy import pipeline, TurbomindEngineConfig, GenerationConfig
         except ImportError as e:
             raise ImportError(
-                "Failed to import `lmdeploy`. Install with: pip install vieneu[gpu]"
+                "Failed to import `lmdeploy`. Install it with: pip install lmdeploy"
             ) from e
 
         backend_config = TurbomindEngineConfig(
@@ -110,8 +110,8 @@ class FastVieNeuTTS(BaseVieneuTTS):
             raise ValueError(
                 "No valid speech tokens found in the output. "
                 "Lỗi này có thể do GPU của bạn không hỗ trợ định dạng bfloat16 (ví dụ: dòng T4, RTX 20-series) "
-                "dẫn đến sai số khi tính toán. Bạn hãy thử chuyển sang dùng phiên bản Clone-voice-TTS-0.3B nếu vẫn muốn dùng LmDeploy hoặc "
-                "bỏ chọn 'LMDeploy' trong Tùy chọn nâng cao. Nếu vẫn gặp lỗi này, hãy thông báo với chúng tôi tại: https://discord.com/invite/yJt8kzjzWZ"
+                "dẫn đến sai số khi tính toán. Bạn hãy thử chuyển sang dùng phiên bản pnnbao-ump/VieNeu-TTS-0.3B nếu vẫn muốn dùng LmDeploy hoặc "
+                "bỏ chọn 'LMDeploy' trong Tùy chọn nâng cao. Nếu vẫn gặp lỗi này, hãy báo lỗi tại: https://github.com/huutien1904/clone-voice/issues"
             )
 
         if self._is_onnx_codec:

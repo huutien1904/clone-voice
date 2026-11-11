@@ -249,7 +249,7 @@ muốn lưu file chuẩn thì ghi lại header sau khi nhận xong, hoặc dùng
 ```python
 from openai import OpenAI
 client = OpenAI(base_url="http://127.0.0.1:8000/v1", api_key="doi-thanh-chuoi-bi-mat")
-audio = client.audio.speech.create(model="vieneu-v3-turbo", voice="clone_A",
+audio = client.audio.speech.create(model="clone-voice-tts-v3-turbo", voice="clone_A",
                                    input="Xin chào, đây là giọng clone.", response_format="wav")
 audio.write_to_file("out.wav")
 ```
@@ -257,7 +257,7 @@ audio.write_to_file("out.wav")
 `model` và `speed` được chấp nhận nhưng bỏ qua; `response_format` nhận `wav`, `pcm`, `flac`, và `mp3`,
 `opus`, `aac` khi server có ffmpeg (nếu client gửi `mp3` mà server không có ffmpeg sẽ nhận `415`).
 Lỗi trên các đường `/v1/*` trả về theo dạng OpenAI `{"error": {"message": ..., "type": ...}}`.
-`GET /v1/models` trả về một model `vieneu-v3-turbo`.
+`GET /v1/models` trả về một model `clone-voice-tts-v3-turbo`. Server không đọc trường `model`, nên app cũ còn gửi `vieneu-v3-turbo` vẫn chạy bình thường.
 
 ### `POST /voices` (thêm giọng qua API, multipart)
 
@@ -291,7 +291,7 @@ Description=Clone-voice-TTS API
 After=network.target
 
 [Service]
-User=vieneu
+User=clonevoice
 WorkingDirectory=/opt/Clone-voice-TTS
 Environment=VIENEU_API_KEY=doi-thanh-chuoi-bi-mat
 Environment=VIENEU_THREADS=4

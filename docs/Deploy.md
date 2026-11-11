@@ -122,7 +122,7 @@ make docker-build-serve
 make docker-push-serve
 ```
 
-*Note: The image is tagged `pnnbao97/vieneu-tts:serve` by default. Update the Makefile if you use a different registry.*
+*Note: The image is tagged `clone-voice-tts:serve` by default (variable `SERVE_IMAGE` in the Makefile); set `SERVE_IMAGE=<your-dockerhub-user>/clone-voice-tts:serve` before pushing.*
 
 ### 2. User Experience
 
@@ -131,7 +131,7 @@ Once pushed, ANY user with an NVIDIA GPU can run your server with a single comma
 ```bash
 docker run --runtime nvidia --gpus all \
   -v ~/.cache/huggingface:/root/.cache/huggingface \
-  pnnbao97/vieneu-tts:serve
+  <your-dockerhub-user>/clone-voice-tts:serve
 ```
 
 This image is optimized purely for serving the API (minimal size, pre-installed dependencies).

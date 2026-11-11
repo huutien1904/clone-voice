@@ -1,5 +1,5 @@
 """
-Clone-voice-TTS v3 Turbo — minimal batched serving runtime (pure PyTorch).
+VieNeu-TTS v3 Turbo — minimal batched serving runtime (pure PyTorch).
 ====================================================================
 """
 from .batched_acoustic import generate_frame_batched

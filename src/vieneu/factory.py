@@ -7,7 +7,7 @@ def Vieneu(mode="v3turbo", **kwargs):
     Args:
         mode: 'v3turbo' (DEFAULT) — Clone-voice-TTS v3 Turbo, 48 kHz. CPU runs torch-free
               via ONNX Runtime; GPU uses PyTorch. Works with the minimal install.
-              Other modes need extras (``pip install vieneu[gpu]``):
+              Other modes need extra dependencies (torch, lmdeploy, llama-cpp-python; see the README):
               'standard' (CPU/GPU-GGUF), 'fast' (GPU-LMDeploy), 'turbo'/'turbo_gpu',
               'remote' (API), 'xpu' (Intel GPU).
         **kwargs: Arguments for chosen class

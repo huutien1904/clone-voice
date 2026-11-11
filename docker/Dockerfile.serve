@@ -37,7 +37,7 @@ RUN dep-installer sync --frozen --no-dev --group gpu --no-install-project
 # Copy the rest
 COPY . .
 
-# Install the project itself (creates the vieneu-serve CLI)
+# Install the project itself
 RUN dep-installer sync --frozen --no-dev --group gpu
 
 # Expose LMDeploy port

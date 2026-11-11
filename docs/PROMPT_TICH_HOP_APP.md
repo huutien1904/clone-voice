@@ -54,7 +54,7 @@ Body:
 Body: `{"text": "...", "voice": "clone_bản tin vip"}`. Trả về `audio/wav` 48 kHz theo chunk, audio đầu tiên tới sau khoảng 0.3 đến 0.5 giây. Header WAV ghi độ dài rất lớn vì chưa biết trước; phát trực tiếp thì bình thường, muốn lưu file chuẩn thì dùng `/tts`.
 
 ### 5. `POST /v1/audio/speech`  (tương thích OpenAI Audio API)
-Body: `{"model": "vieneu-v3-turbo", "input": "...", "voice": "clone_bản tin vip", "response_format": "wav"}`. Nếu ứng dụng đã dùng SDK OpenAI thì chỉ cần đổi `base_url` thành `http://<HOST>:8000/v1` và `voice="clone_bản tin vip"`; `response_format` nhận `wav`, `pcm`, `flac`, và `mp3`/`opus`/`aac` khi server có ffmpeg. Lỗi trên `/v1/*` trả về dạng OpenAI `{"error": {"message": ...}}`.
+Body: `{"model": "clone-voice-tts-v3-turbo", "input": "...", "voice": "clone_bản tin vip", "response_format": "wav"}`. Nếu ứng dụng đã dùng SDK OpenAI thì chỉ cần đổi `base_url` thành `http://<HOST>:8000/v1` và `voice="clone_bản tin vip"`; `response_format` nhận `wav`, `pcm`, `flac`, và `mp3`/`opus`/`aac` khi server có ffmpeg. Lỗi trên `/v1/*` trả về dạng OpenAI `{"error": {"message": ...}}`.
 
 ## Ví dụ tham chiếu
 
@@ -62,7 +62,7 @@ Python:
 ```python
 import os, requests
 
-BASE = os.getenv("VIENEU_URL", "http://<HOST>:8000")
+BASE = os.getenv("CLONE_VOICE_TTS_URL", "http://<HOST>:8000")
 HEADERS = {"X-API-Key": os.getenv("VIENEU_API_KEY", "")}
 
 def synthesize(text: str, voice: str = "clone_bản tin vip", sample_rate: int | None = None) -> bytes:
@@ -80,7 +80,7 @@ open("out.wav", "wb").write(synthesize("Xin chào, đây là giọng clone A."))
 
 JavaScript (Node 18+ hoặc trình duyệt):
 ```js
-const BASE = process.env.VIENEU_URL ?? "http://<HOST>:8000";
+const BASE = process.env.CLONE_VOICE_TTS_URL ?? "http://<HOST>:8000";
 const HEADERS = { "Content-Type": "application/json", "X-API-Key": process.env.VIENEU_API_KEY ?? "" };
 
 export async function synthesize(text, voice = "clone_bản tin vip") {
@@ -98,7 +98,7 @@ Dùng SDK OpenAI:
 ```python
 from openai import OpenAI
 client = OpenAI(base_url="http://<HOST>:8000/v1", api_key="<API_KEY>")
-resp = client.audio.speech.create(model="vieneu-v3-turbo", voice="clone_bản tin vip",
+resp = client.audio.speech.create(model="clone-voice-tts-v3-turbo", voice="clone_bản tin vip",
                                   input="Xin chào, đây là giọng clone A.", response_format="wav")
 resp.write_to_file("out.wav")
 ```

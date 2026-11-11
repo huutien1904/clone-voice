@@ -1,5 +1,5 @@
 """
-Clone-voice-TTS v3 Turbo — model definition (inference).
+VieNeu-TTS v3 Turbo — model definition (inference).
 ===================================================
 Defines the network that turns text + a reference voice into audio tokens:
 a Qwen3 semantic backbone followed by a small acoustic decoder that emits the
@@ -124,7 +124,7 @@ class AcousticDecoder(nn.Module):
         return self.norm(x), new_k, new_v
 
 class VieNeuV3TurboForTTS(PreTrainedModel):
-    """Clone-voice-TTS v3 Turbo network (Qwen3 backbone + acoustic decoder).
+    """VieNeu-TTS v3 Turbo network (Qwen3 backbone + acoustic decoder).
 
     At synthesis time the inference engine runs the backbone step by step with a
     KV cache and calls :meth:`decode_one_frame` to sample the 16 RVQ codes of

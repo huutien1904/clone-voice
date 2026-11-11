@@ -11,7 +11,7 @@ Tài liệu này mô tả cách nhúng **Clone-voice-TTS** trực tiếp vào m�
 ## 1. Cài đặt
 
 ```bash
-pip install vieneu
+pip install "git+https://github.com/huutien1904/clone-voice"
 ```
 
 - **CPU (mặc định)** — torch-free, chạy v3 Turbo qua ONNX Runtime. Đa số dùng bản này.
@@ -20,7 +20,7 @@ pip install vieneu
   ```bash
   pip install torch==2.8.0 torchaudio==2.8.0 --index-url https://download.pytorch.org/whl/cu128
   pip install "transformers==4.57.6"
-  pip install vieneu
+  pip install "git+https://github.com/huutien1904/clone-voice"
   ```
 
 > **Lần chạy đầu** sẽ tự tải model weights từ HuggingFace về cache (`~/.cache/huggingface`).

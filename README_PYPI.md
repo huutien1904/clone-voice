@@ -23,7 +23,7 @@
 **CPU (default)** — torch-free, runs v3 Turbo via ONNX Runtime. Most users want this:
 
 ```bash
-pip install vieneu
+pip install "git+https://github.com/huutien1904/clone-voice"
 ```
 
 **GPU (CUDA)** — only if you have an NVIDIA GPU. Install a CUDA build of PyTorch
@@ -32,7 +32,7 @@ pip install vieneu
 ```bash
 pip install torch==2.8.0 torchaudio==2.8.0 --index-url https://download.pytorch.org/whl/cu128
 pip install "transformers==4.57.6"   # Qwen3 backbone + MOSS codec (pinned — most stable for the GPU SDK)
-pip install vieneu
+pip install "git+https://github.com/huutien1904/clone-voice"
 ```
 
 > ℹ️ **When is GPU actually worth it?** The GPU win comes from **batching**, so it
@@ -132,6 +132,8 @@ wav, sr = vieneu.denoise("noisy.wav", out_path="clean.wav")
 ---
 
 ## 🔬 Model Overview
+
+The default model is **VieNeu-TTS v3 Turbo**, designed and trained by Phạm Nguyễn Ngọc Bảo ([pnnbao-ump/VieNeu-TTS-v3-Turbo](https://huggingface.co/pnnbao-ump/VieNeu-TTS-v3-Turbo)); "Clone-voice-TTS v3 Turbo" is this product's name for it.
 
 | Model | Engine | Device | Sample Rate | Features |
 |---|---|---|---|---|

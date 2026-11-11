@@ -5,20 +5,14 @@
 > [!TIP]
 > **Không biết code? Làm theo [Hướng dẫn cài và dùng Clone-voice-TTS](HUONG_DAN.md)**: chỉ cần ứng dụng Claude trên máy tính (gói Pro trở lên) và dán một đoạn có sẵn, có ảnh minh hoạ từng bước.
 
-[![Awesome](https://img.shields.io/badge/Awesome-NLP-green?logo=github)](https://github.com/keon/awesome-nlp)
-[![Discord](https://img.shields.io/badge/Discord-Join%20Us-5865F2?logo=discord&logoColor=white)](https://discord.gg/yJt8kzjzWZ)
-
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1b9PO-lcGZX9pEkEwQmu8MfhSnjxKrALW?usp=sharing)
 [![Hugging Face VieNeu-TTS-v3-Turbo](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-v3--Turbo-red)](https://huggingface.co/pnnbao-ump/VieNeu-TTS-v3-Turbo)
 [![Hugging Face VieNeu-TTS-v2](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-v2-blue)](https://huggingface.co/pnnbao-ump/VieNeu-TTS-v2)
 [![Hugging Face VieNeu-TTS](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-v1-orange)](https://huggingface.co/pnnbao-ump/VieNeu-TTS)
 
-<img width="1087" height="710" alt="image" src="https://github.com/user-attachments/assets/5534b5db-f30b-4d27-8a35-80f1cf6e5d4d" />
-
-**Clone-voice-TTS-v2** is the next generation of on-device Vietnamese TTS, featuring **10,000+ hours** of bilingual training, **instant voice cloning**, and a dedicated **Podcast/Conversation** mode.
+**Clone-voice-TTS** is built on **VieNeu-TTS-v2 / v3 Turbo**, the on-device Vietnamese TTS models designed and trained by Phạm Nguyễn Ngọc Bảo on **10,000+ hours** of bilingual speech, with **instant voice cloning** and a dedicated **Podcast/Conversation** mode.
 
 > [!NOTE]
-> **🆕 Clone-voice-TTS v3 Turbo (early access) is out for preview!**
+> **🆕 Clone-voice-TTS runs on VieNeu-TTS v3 Turbo (early access)**
 > A brand-new architecture **designed and trained from scratch by Phạm Nguyễn Ngọc Bảo** (codec: [MOSS-Audio-Tokenizer-Nano](https://huggingface.co/OpenMOSS-Team/MOSS-Audio-Tokenizer-Nano); phonemizer: [sea-g2p](https://github.com/pnnbao97/sea-g2p)):
 > - **48 kHz** high-fidelity audio (up from 24 kHz).
 > - **Built-in default voices** — stable and consistent, no reference clip needed.
@@ -27,11 +21,11 @@
 > - **Batched generation** (batch size up to 32), including a multi-speaker **Conversation** mode that batches the whole script regardless of speaker.
 > - **Instant voice cloning** from a 3–8s clip, with automatic reference denoising.
 >
-> Try it in the Web UI (backbone **"Clone-voice-TTS-v3-Turbo (Thử nghiệm)"**) or the SDK (`Vieneu(mode="v3turbo")`). The **full v3** release is coming in the next few weeks.
+> Try it in the Web UI (model **"Clone-voice-TTS v3 · Nhanh (khuyên dùng)"**) or the SDK (`Vieneu(mode="v3turbo")`).
 
 > [!IMPORTANT]
-> **🚀 Clone-voice-TTS-v2 is here!**
-> The full high-fidelity bilingual architecture is now available with:
+> **🚀 Clone-voice-TTS-v2 (GPU) runs VieNeu-TTS-v2 by Phạm Nguyễn Ngọc Bảo**
+> The original author's full high-fidelity bilingual architecture, with:
 > - **10,000+ Hours of Data:** Unmatched naturalness in both English and Vietnamese.
 > - **Podcast & Dialogue Mode:** Multi-speaker support with emotional nuances.
 > - **Zero-shot Cloning:** Clone any voice in 3-5 seconds across all v2 variants.
@@ -43,8 +37,6 @@
 - **Instant Voice Cloning**: Clone any voice with just **3-5 seconds** of reference audio.
 - **Ultra-Fast Performance**: Optimized for **GPU (LMDeploy)** and **CPU (GGUF/ONNX)**.
 - **Production-Ready**: High-quality 24 kHz waveform generation, fully offline.
-
-[<img width="600" height="595" alt="Clone-voice-TTS Demo" src="https://github.com/user-attachments/assets/021f6671-2d7f-4635-91fb-88b2ab0ddbcd" />](https://github.com/user-attachments/assets/021f6671-2d7f-4635-91fb-88b2ab0ddbcd)
 
 ## 📌 Table of Contents
 
@@ -113,7 +105,7 @@ The `vieneu` SDK **defaults to Clone-voice-TTS v3 Turbo (48 kHz)**. The minimal 
 > ⚡**On CPU the backbone runs `int8` by default** — ~1.6× faster and ~4× smaller than fp32, with voice quality preserved. Want maximum fidelity instead? Pass `Vieneu(precision="fp32")` (slower on CPU). `precision` only affects the CPU/ONNX path; on GPU it's ignored (PyTorch).
 
 ```bash
-pip install vieneu
+pip install "git+https://github.com/huutien1904/clone-voice"
 ```
 
 **GPU (CUDA)** — only if you have an NVIDIA GPU. 
@@ -126,7 +118,7 @@ pip install vieneu
 ```bash
 pip install torch==2.8.0 torchaudio==2.8.0 --index-url https://download.pytorch.org/whl/cu128
 pip install "transformers==4.57.6"   # pinned — most stable transformers for the GPU SDK
-pip install vieneu
+pip install "git+https://github.com/huutien1904/clone-voice"
 ```
 
 ```python
@@ -286,7 +278,7 @@ wav, sr = vieneu.denoise("noisy.wav", out_path="clean.wav")   # 44.1 kHz mono
 
 ## 🐳 3. High-Quality Server (Standard Mode) <a name="docker-remote"></a>
 
-Deploy Clone-voice-TTS as a high-performance API Server (powered by LMDeploy) with a single command.
+Deploy Clone-voice-TTS as a high-performance API Server (powered by LMDeploy, NVIDIA GPU) with Docker.
 
 ### 1. Run with Docker (Recommended)
 
@@ -294,10 +286,11 @@ Deploy Clone-voice-TTS as a high-performance API Server (powered by LMDeploy) wi
 
 **Start the Server with a Public Tunnel (No port forwarding needed):**
 ```bash
-docker run --gpus all -p 23333:23333 -v huggingface_cache:/root/.cache/huggingface pnnbao/vieneu-tts:latest --tunnel
+docker build -t clone-voice-tts:serve -f docker/Dockerfile.serve .   # run inside the repo folder
+docker run --gpus all -p 23333:23333 -v huggingface_cache:/root/.cache/huggingface clone-voice-tts:serve --tunnel
 ```
 
-*   **Default**: The server loads the `Clone-voice-TTS-v2` model for maximum quality.
+*   **Default**: The server loads `pnnbao-ump/VieNeu-TTS-v2` (Clone-voice-TTS-v2) for maximum quality.
 *   **Tunneling**: The Docker image includes a built-in `bore` tunnel. Check the container logs to find your public address (e.g., `bore.pub:31631`).
 
 ### 2. Using the SDK (Remote Mode)
@@ -306,7 +299,7 @@ Once the server is running, you can connect from anywhere (Colab, Web Apps, etc.
 
 **Installation**:
 ```bash
-pip install "vieneu[legacy]"
+pip install "vieneu[legacy] @ git+https://github.com/huutien1904/clone-voice"
 ```
 
 **Usage**:
@@ -363,7 +356,7 @@ Customize the server to run specific versions or your own fine-tuned models.
 
 **Run the 0.3B Model (Faster):**
 ```bash
-docker run --gpus all pnnbao/vieneu-tts:serve --model pnnbao-ump/VieNeu-TTS-0.3B --tunnel
+docker run --gpus all clone-voice-tts:serve --model pnnbao-ump/VieNeu-TTS-0.3B --tunnel
 ```
 
 **Serve a Local Fine-tuned Model:**
@@ -372,13 +365,15 @@ If you have merged a LoRA adapter, mount your output directory to the container:
 # Linux / macOS
 docker run --gpus all \
   -v $(pwd)/finetune/output:/workspace/models \
-  pnnbao/vieneu-tts:serve \
+  clone-voice-tts:serve \
   --model /workspace/models/merged_model --tunnel
 ```
 
 ---
 
 ## 🔬 4. Model Overview <a name="backbones"></a>
+
+Every backbone below runs a model trained and published by **Phạm Nguyễn Ngọc Bảo** in the original VieNeu-TTS project ([huggingface.co/pnnbao-ump](https://huggingface.co/pnnbao-ump), repos `VieNeu-TTS*`); the Clone-voice-TTS names are this product's labels for them.
 
 | Model | Format | Device | Bilingual | Features | Speed |
 |---|---|---|---|---|---|
@@ -392,11 +387,13 @@ docker run --gpus all \
 
 ## 🚀 5. Roadmap <a name="roadmap"></a>
 
-- [x] **Clone-voice-TTS-v2**: Full high-fidelity bilingual architecture with **Podcast Mode** and **Voice Cloning**.
+Roadmap of the original **VieNeu-TTS** project by Phạm Nguyễn Ngọc Bảo, for reference only (not Clone-voice-TTS commitments):
+
+- [x] **VieNeu-TTS-v2**: Full high-fidelity bilingual architecture with **Podcast Mode** and **Voice Cloning**.
 - [x] **VieNeu-Codec**: Optimized neural codec for Vietnamese (ONNX).
 - [x] **Turbo Voice Cloning**: Bringing instant cloning to the lightweight Turbo engine.
-- [x] **Clone-voice-TTS v3 Turbo (early access)**: New from-scratch 48 kHz architecture — built-in default voices (speaker tokens), experimental emotion cues, batched generation & multi-speaker conversation.
-- [ ] **Clone-voice-TTS v3 (full release)**: Complete v3 with finalized quality, stable emotion control, more default voices & streaming server.
+- [x] **VieNeu-TTS v3 Turbo (early access)**: New from-scratch 48 kHz architecture — built-in default voices (speaker tokens), experimental emotion cues, batched generation & multi-speaker conversation.
+- [ ] **VieNeu-TTS v3 (full release)**: Complete v3 with finalized quality, stable emotion control, more default voices & streaming server.
 - [ ] **Mobile SDK**: Official support for Android/iOS deployment.
 
 ---
@@ -413,7 +410,7 @@ docker run --gpus all \
 This version:
 
 ```bibtex
-@misc{vieneutts_clone2026,
+@misc{clonevoicetts2026,
   title        = {Clone-voice-TTS: voice cloning from video, API server and accent tuning},
   author       = {Tran Trong Thanh Tung and Huu Tien},
   year         = {2026},

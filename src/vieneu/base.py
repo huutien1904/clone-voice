@@ -111,7 +111,7 @@ class BaseVieneuTTS(ABC):
             raise ImportError(
                 f"Codec '{codec_repo}' requires PyTorch. \n"
                 "To remain lightweight in Remote mode, please use 'neuphonic/neucodec-onnx-decoder-int8'. \n"
-                "Or install torch via: pip install vieneu[gpu]"
+                "Or install the PyTorch codec dependencies: pip install torch torchaudio \"neucodec>=0.0.4\""
             )
 
 

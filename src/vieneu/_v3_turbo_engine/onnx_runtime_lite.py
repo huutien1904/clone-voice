@@ -1,5 +1,5 @@
 """
-Clone-voice-TTS v3 Turbo — torch-free ONNX engine (CPU).
+VieNeu-TTS v3 Turbo — torch-free ONNX engine (CPU).
 ===================================================
 A PyTorch-free inference engine for the ``update`` architecture (speaker-embedding
 conditioning + single-layer acoustic decoder). The transformer forwards and the
